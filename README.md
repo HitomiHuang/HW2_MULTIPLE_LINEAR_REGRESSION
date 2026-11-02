@@ -13,7 +13,7 @@
 
 [下載整合分析報告（PDF）](output/pdf/regression_lab_complete_report.pdf)
 
-文件包含資訊圖表、CRISP-DM 分析、模型評估、GPT 輔助內容、NotebookLM 摘要，以及本次實際在 ChatGPT 網頁取得的技術問答截圖。
+文件包含資訊圖表、CRISP-DM 分析、模型評估、GPT 輔助內容、NotebookLM 摘要，以及 ChatGPT 技術問答截圖。
 
 ## 網站畫面
 

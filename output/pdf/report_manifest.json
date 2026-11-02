@@ -1,6 +1,6 @@
 {
   "file": "regression_lab_complete_report.pdf",
-  "pages": 18,
+  "pages": 17,
   "sections": {
     "contents": 2,
     "infographic": 3,
@@ -12,15 +12,14 @@
     "deployment": 9,
     "ai_research": 10,
     "references": 11,
-    "chatgpt_web_qa": 12,
-    "qa_1": 13,
-    "qa_2": 14,
-    "qa_3": 15,
-    "qa_4": 16,
-    "qa_5": 17,
-    "qa_6": 18
+    "qa_1": 12,
+    "qa_2": 13,
+    "qa_3": 14,
+    "qa_4": 15,
+    "qa_5": 16,
+    "qa_6": 17
   },
-  "exported_at": "2026-11-03T02:24:01.806439+08:00",
+  "exported_at": "2026-11-03T02:32:04.909995+08:00",
   "chatgpt_web_qa_count": 6,
   "chatgpt_conversation_url": "https://chatgpt.com/c/6ae8d345-a794-83ee-9b4c-07099bdd0c49",
   "screenshot_checks": [
@@ -73,10 +72,10 @@
     "housing: independently verified RMSE, R2, coverage and disjoint splits"
   ],
   "prior_dialogue_appendices_removed": true,
-  "sha256": "515921cdecf32466883720aedbc957aed0e2adefc3c3e3612fd8bdfb636e9562",
+  "sha256": "da3887a9b34c11f2582e2e6548c5979a9ca7667a220b97ef72a5c2e77aa06b84",
   "visual_review": {
-    "pages_reviewed": 18,
+    "pages_reviewed": 17,
     "render_scale_pixels": 1300,
-    "result": "All rendered pages reviewed. New questions and complete replies remain legible; no clipping or overlapping text; original screenshot bytes verified."
+    "result": "All rendered pages reviewed. Question screenshots contain titles and images only; requested annotations, link, topic table, and capture timestamps removed. No clipping or overlapping text."
   }
 }

@@ -183,8 +183,7 @@ def main():
  story.append(table(['分析主題','原始特徵','測試 R²','95% PI 實測覆蓋'],[[label,r['original_features'],f"{r['metrics'][-1]['r2']:.6f}",f"{r['interval']['coverage']*100:.3f}%"] for label,r in [('洪水風險分數',results['flood']),('King County 房價',results['housing'])]],[57*mm,25*mm,38*mm,WIDTH-120*mm]))
  story.append(Spacer(1,6*mm))
  story.append(link('網站：'+LIVE,LIVE));story.append(link('GitHub：'+GITHUB,GITHUB))
- add('文件整理時間：'+STAMP.strftime('%Y-%m-%d %H:%M')+'（Asia/Taipei）','small')
- add('內容包含：資訊圖表、CRISP-DM 分析、模型評估與區間圖、GPT 輔助內容、NotebookLM 摘要，以及本次實際在 ChatGPT 網頁取得的六組技術問答截圖。','small')
+ add('內容包含：資訊圖表、CRISP-DM 分析、模型評估與區間圖、GPT 輔助內容、NotebookLM 摘要，以及 ChatGPT 技術問答截圖。','small')
  add('本報告以網站使用的每題 4,000 筆樣本為主要結果。既有 50,000 筆洪水實驗屬不同資料範圍，其指標不與本報告混用。','small')
  section('內容索引','contents')
  toc=TableOfContents();toc.levelStyles=[ParagraphStyle('toc',fontName='CJK',fontSize=10.2,leading=19,textColor=INK,leftIndent=0,rightIndent=15,spaceAfter=5)]
@@ -257,21 +256,11 @@ def main():
  add('本機重現','h2')
  for text in ['python -m pip install -r requirements.txt','python analyze_dataset.py --problem flood','python analyze_dataset.py --problem housing','python analyze_dataset.py --input data/50_Startups.csv --target Profit','python -m unittest discover -s tests -v']:add(text,'small')
  add('主分析引擎：web/dist/analysis.py；網站樣本與示範結果：web/dist/data/；既有數值檢查與部署結果：output/web_validation.json、output/deployment.json。')
- section('ChatGPT 技術問答｜實際網頁截圖','chatgpt_web_qa')
- add('本章收錄本次在 ChatGPT 網頁實際送出問題、取得完整回答後擷取的畫面。問題根據本專案已完成的資料、流程、實測指標與部署方式提出，包含方法確認與適用範圍的追問。')
- add('提問時提供了本專案的實驗設定與數值，ChatGPT 據此解釋方法及結果；這些回覆不是 ChatGPT 另行執行本機程式或 NotebookLM 的驗證紀錄。','small')
- story.append(link('實際對話：'+webqa['conversation_url'],webqa['conversation_url']))
- add('網頁顯示模型：'+webqa['model_label']+'。以下保留原始截圖，不重製或改寫畫面中的回答。','small')
- story.append(table(['問答','主題'],[[str(i),q['topic']] for i,q in enumerate(webqa['questions'],1)],[20*mm,WIDTH-20*mm]))
- add('問答 4 的一般獨立性檢查建議，於問答 5 進一步釐清為隨機表格資料、時間及群組切分的適用範圍。閱讀時請一併參照。','small')
  for i,q in enumerate(webqa['questions'],1):
-  section('問答 '+str(i)+'｜'+q['topic'],'qa_'+str(i))
-  if q.get('editor_note'):add(q['editor_note'],'small')
+  section('ChatGPT 技術問答 '+str(i)+'｜'+q['topic'],'qa_'+str(i))
   for j,rel in enumerate(q['screenshots']):
    if j:story.append(PageBreak());add('問答 '+str(i)+'｜續圖','h2')
    story.append(image(ROOT/rel,height=226*mm))
-   captured=datetime.fromisoformat(q['captured_at'].replace('Z','+00:00')).astimezone(TZ)
-   add('ChatGPT 實際網頁畫面 | 擷取時間：'+captured.strftime('%Y-%m-%d %H:%M:%S')+'（Asia/Taipei）','small')
  destination=OUT/'regression_lab_complete_report.pdf'
  doc=ReportDoc(destination);doc.multiBuild(story,maxPasses=5)
  reader=PdfReader(destination)
@@ -280,7 +269,7 @@ def main():
   assert term in all_text,term
  assert 'https://hitomihuang.github.io/HW2_MULTIPLE_LINEAR_REGRESSION/' in all_text
  assert nb['summary'].split('\n\n')[0][:24] in all_text.replace('\n','')
- for removed in ['先前保存的 ChatGPT 協作文字','本次修訂、網站部署與文件整理對話','ChatGPT 網頁問答原始截圖','請幫我組成文件PDF']:
+ for removed in ['先前保存的 ChatGPT 協作文字','本次修訂、網站部署與文件整理對話','ChatGPT 網頁問答原始截圖','請幫我組成文件PDF','實際網路截圖','實際網頁截圖','提問時提供了本專案的實驗設定與數值','實際對話：','網頁顯示模型：','問答 4 的一般獨立性檢查建議','獨立性診斷的適用條件另於下一組問答補充','擷取時間：','ChatGPT 實際網頁畫面',webqa['conversation_url']]:
   assert removed not in all_text,removed
  screenshot_checks=[]
  for i,q in enumerate(webqa['questions'],1):
