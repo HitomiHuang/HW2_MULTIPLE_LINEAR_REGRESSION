@@ -25,3 +25,10 @@
 - 原始洪水報告為 50,000 筆，網站為 4,000 筆，不混用兩者指標。
 
 部署與公開網址的狀態另見 output/deployment.json；本檔不以預期 URL 代替實際部署成功。
+
+## 發布與最後視覺確認
+
+- Sites 公開版本 2 發布成功；實際 URL 與來源 commit 記錄於 output/deployment.json。
+- 正式網站可直接開啟，洪水示範 R² = 0.8595、95% PI 圖與模型比較正常顯示；完成畫面存於 output/evidence/website_live.jpg。
+- 修正 Plotly 共用 layout 物件造成的座標軸型態互相影響：各圖使用獨立深拷貝。房價殘差 / Q-Q 圖重新檢視，數值刻度恢復正確。
+- 新版 ZIP 通過 CRC、全部 manifest SHA-256、主要必備檔案及最終圖表程式檢查。

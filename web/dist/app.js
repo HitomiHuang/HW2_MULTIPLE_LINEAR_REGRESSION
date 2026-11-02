@@ -81,7 +81,7 @@ const layout={font:{family:'Segoe UI, Microsoft JhengHei, sans-serif',size:11,co
 function plot(id,data,extra={}){
   if(!window.Plotly){$(id).textContent='圖表元件載入失敗，請重新整理；數值仍可從表格及下載檔查看。';return;}
   const active=$(id).closest('.panel').classList.contains('active');
-  Plotly.react(id,data,{...layout,...extra},{responsive:true,displayModeBar:false}).then(()=>{if(active)Plotly.Plots.resize($(id));});
+  Plotly.react(id,data,structuredClone({...layout,...extra}),{responsive:true,displayModeBar:false}).then(()=>{if(active)Plotly.Plots.resize($(id));});
 }
 function table(id,headers,rows){$(id).innerHTML='<table><thead><tr>'+headers.map(h=>'<th>'+escapeHTML(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(v=>'<td>'+escapeHTML(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';}
 function intervalChart(){
