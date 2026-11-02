@@ -1,9 +1,9 @@
 {
   "project_id": "appgprj_6ae8adfb0c1081918e7d21098f66dce0",
-  "version": 2,
-  "deployment_id": "appgdep_6ae8b6085b888191a500df571a8df798",
+  "version": 3,
+  "deployment_id": "appgdep_6ae8bfd250c88191bd6014de2af74bd8",
   "status": "succeeded",
   "access_mode": "public",
-  "url": "https://hw2-regression-lab-5113056021.ivy819.chatgpt.site",
-  "source_commit": "51928c8c61854ac0606d97093c6744fb5af2faaf"
+  "url": "https://regression-lab-explorer.ivy819.chatgpt.site",
+  "source_commit": "52ebebde95be9dfed28484f4acc5e81c696c2295"
 }

@@ -108,7 +108,7 @@ function render(r,demo){
   $('kpi-features').innerHTML=r.selected_features.length+' <em>/ '+r.encoded_features+'</em>';
   $('feature-caption').textContent=r.original_features+' 個原始輸入特徵 · 編碼後選入';
   $('target-unit').textContent='越低越好 · '+(problems[state.problem]?.unit||'Target 原始單位');
-  const notes=[...r.notices];if(!r.assignment_eligible)notes.unshift('這份資料有 '+r.original_features+' 個原始輸入特徵，未符合主要題目 14–39 個特徵限制；可用於自訂 Dataset 加分功能示範。');
+  const notes=[...r.notices];
   if(r.split.calibration/ r.sample_rows>.25)notes.push('小資料集調整：為建立有限的 95% conformal 區間，保留至少 19 筆校準資料；實際切分筆數如下。');
   $('notices').innerHTML=notes.map(t=>'<div class="notice">'+escapeHTML(t)+'</div>').join('');
   $('split-summary').textContent=`來源 ${r.source_rows.toLocaleString()} 筆，分析 ${r.sample_rows.toLocaleString()} 筆；訓練 ${r.split.train}、校準 ${r.split.calibration}、測試 ${r.split.test}。排除 Target 缺失或非數值 ${r.removed_target} 筆。95% 區間平均寬度 ${fmt(r.interval.width)}，校準殘差第 ${r.interval.rank} 順位；seed = ${r.seed}。`;
@@ -154,6 +154,6 @@ async function init(){
   $('download-csv').onclick=csvExport;$('download-data').onclick=()=>{if(state.csv)download('dataset.csv','\uFEFF'+state.csv,'text/csv;charset=utf-8');else status('請先載入 Dataset。',true);};
   $('print').onclick=()=>window.print();window.addEventListener('beforeprint',()=>document.querySelectorAll('.js-plotly-plot').forEach(el=>Plotly.Plots.resize(el)));
   selectProblem('flood');
-  try{const n=await fetch('data/notebooklm.json').then(r=>r.json());$('notebook-summary').innerHTML=n.summary.split('\n\n').map(p=>'<p>'+escapeHTML(p)+'</p>').join('');$('notebook-link').href=n.notebook_url;$('research-sources').innerHTML=n.sources.map(s=>'<a href="'+escapeHTML(s.url)+'" target="_blank" rel="noopener">['+s.id+'] '+escapeHTML(s.title)+' ↗</a>').join('');}catch{$('notebook-summary').textContent='研究摘要載入失敗，請從原始報告或作業檔案查看。';}
+  try{const n=await fetch('data/notebooklm.json').then(r=>r.json());$('notebook-summary').innerHTML=n.summary.split('\n\n').map(p=>'<p>'+escapeHTML(p)+'</p>').join('');$('notebook-link').href=n.notebook_url;$('research-sources').innerHTML=n.sources.map(s=>'<a href="'+escapeHTML(s.url)+'" target="_blank" rel="noopener">['+s.id+'] '+escapeHTML(s.title)+' ↗</a>').join('');}catch{$('notebook-summary').textContent='研究摘要暫時無法載入，請透過研究筆記本或參考來源閱讀。';}
 }
 init();

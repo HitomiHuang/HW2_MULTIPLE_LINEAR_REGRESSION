@@ -1,102 +1,78 @@
-# 5113056021 HW2：多元線性回歸實驗室
+# Regression Lab｜多元線性回歸
 
-依 2026-11-02 修訂作業要求製作，完成加總分 2 分所需功能。實際評分依教師驗收。
+探索資料、挑選特徵，並以預測區間理解模型的不確定性。可使用內建的洪水與房價資料，或匯入自己的 CSV，在瀏覽器中執行完整的線性回歸分析。
 
-- **網站**：[Regression Lab](https://hw2-regression-lab-5113056021.ivy819.chatgpt.site)
-- **GitHub**：[HW2_MULTIPLE_LINEAR_REGRESSION](https://github.com/HitomiHuang/HW2_MULTIPLE_LINEAR_REGRESSION)
+[開啟互動網站](https://regression-lab-explorer.ivy819.chatgpt.site)
 
-## 加分功能與驗收
+## 網站預覽
 
-1. **Problem 下拉選單**：切換洪水風險分數（20 個原始輸入特徵）與 King County 房價（18 個），各有資料、模型、特徵選擇及評估。
-2. **任意 Dataset**：貼上公開 CSV 網址或上傳 UTF-8 CSV/TSV，選擇 Target 與排除欄位，按「執行回歸分析」實際重新訓練。
-3. 教師範例可直接貼入：
-   `https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv`，Target 選 **Profit**。
-4. 查看特徵選擇、MAE / MSE / RMSE / R² / 調整 R²，切換 **95% conformal 預測區間、OLS 平均反應信賴區間、OLS 單筆預測區間**；下載完整 JSON 或逐筆 CSV。
+資料集切換與分析設定：
 
-50 Startups 有 4 個原始特徵，僅用來驗證自訂 Dataset；主要兩題均符合 14–39 特徵要求。原始特徵數不包含 Target、CSV 索引、ID、日期；one-hot 後欄數另列。
+![Regression Lab 資料集與分析設定](docs/images/site-overview.jpg)
 
-## 操作與執行
+95% 預測區間與預測結果：
 
-網站第一次顯示的是預先計算示範。按「執行回歸分析」後，Pyodide Web Worker 在瀏覽器內真正執行 **scikit-learn LinearRegression**。首次需從 jsDelivr 下載 Python 與 numpy/pandas/scipy/scikit-learn，約 30–90 秒，依網路情況而異。自訂資料留在瀏覽器，不送至網站伺服器。
+![模型評估與預測區間](docs/images/site-results.jpg)
 
-URL 必須直接回傳 CSV 並允許 CORS；受限時可下載後上傳。互動版上限 10 MB、100 個原始特徵、300 個編碼特徵；至少 30 筆有效目標。可選 1,000 / 4,000 / 10,000 筆分析上限。文字欄位超過 40 類或訓練集全空會明示排除；本工具不是所有格式與無限資料量的通用服務。
+## 可以做什麼
 
-在專案根目錄啟動網站：
+- 切換洪水風險分數、King County 房價，或透過 CSV 網址與檔案上傳匯入資料。
+- 選擇預測目標、排除欄位與分析筆數，執行特徵選擇及線性回歸。
+- 比較 MAE、MSE、RMSE、R² 與調整 R²，查看殘差、Q-Q 圖及回歸係數。
+- 切換 95% conformal 預測區間、OLS 平均反應信賴區間與 OLS 單筆預測區間。
+- 下載分析結果 JSON、逐筆預測 CSV 與目前資料集，或將結果列印為 PDF。
 
-```bash
-python -m http.server 8765 --directory web/dist
-```
+## 資料集與示範結果
 
-瀏覽器開啟 `http://localhost:8765`。請透過 HTTP 伺服器使用；直接雙擊 HTML 不支援 Worker 與資料載入。
+| 資料集 | 原始輸入特徵 | 預測目標 | 測試 RMSE | 測試 R² | 95% 區間實測覆蓋率 |
+|---|---:|---|---:|---:|---:|
+| [洪水分數](https://www.kaggle.com/competitions/playground-series-s4e5/data) | 20 | FloodProbability | 0.020139 | 0.859509 | 94.625% |
+| [King County 房價](https://www.kaggle.com/datasets/harlfoxem/housesalesprediction) | 18 | price（USD） | 214,640.38 | 0.678480 | 96.375% |
 
-不開網頁也可重現（建議 Python 3.12）：
+兩個內建資料集各使用固定抽取的 4,000 筆樣本，分為 2,400 筆訓練、800 筆校準與 800 筆測試資料。原始特徵數不包含目標、索引、ID 與日期；類別編碼後欄數另行顯示。
+
+自訂資料可使用 [50 Startups CSV](https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv)，以 `Profit` 為預測目標。這份資料有 50 筆觀測、4 個原始輸入特徵，包含可編碼的 `State` 類別欄位。
+
+## 使用方式
+
+1. 選擇內建資料集，或展開「使用自己的 Dataset」載入 CSV。
+2. 確認 Target、排除欄位與分析筆數。
+3. 按「執行回歸分析」，再從導覽列查看模型總覽、特徵選擇與分析流程。
+4. 在「資料與匯出」下載結果。
+
+首次執行需下載 Python 與分析套件，約需 30–90 秒，視網路而定。內建示範可立即查看；自訂資料在瀏覽器內運算，不送至網站伺服器。CSV 網址需允許 CORS，受限時可下載後上傳。支援 UTF-8 CSV/TSV，檔案最多 10 MB、至少 30 筆有效目標，分析筆數可選 1,000、4,000 或 10,000 筆上限。
+
+## 分析方法
+
+依 CRISP-DM 串連問題定義、資料理解、前處理、建模、評估與部署。使用 scikit-learn 的 `Pipeline`、`SelectKBest` 與 `LinearRegression`；中位數補值、標準化及類別編碼都只在訓練折內估計。五折交叉驗證比較保留 1 欄、50%、75% 與全部編碼特徵，依平均 RMSE 選擇設定，測試集不參與選模。
+
+95% split-conformal 區間使用獨立校準集的絕對殘差排序建立，需要校準與新資料可交換的前提；實測覆蓋率不代表每個子群的保證。小樣本至少保留 19 筆校準，因此 50 Startups 切為 21 筆訓練、19 筆校準、10 筆測試。OLS 區間另有模型假設，且未校正特徵選擇帶來的不確定性。
+
+洪水資料是合成分數，房價資料是 2014–2015 年歷史交易。房價欄位有精確共線性，程式會提示矩陣秩不足並採 SVD 解；zipcode 的數值表示也是此基線的限制。隨機切分結果不代表跨時期或跨地區的泛化表現。
+
+## 本機執行
+
+建議使用 Python 3.12，在專案根目錄執行：
 
 ```bash
 python -m pip install -r requirements.txt
-python analyze_dataset.py --problem flood --output output/flood_recomputed.json
-python analyze_dataset.py --problem housing --output output/housing_recomputed.json
-python analyze_dataset.py --input data/50_Startups.csv --target Profit --output output/startups_recomputed.json
-python -m unittest discover -s tests -v
+python -m http.server 8765 --directory web/dist
 ```
 
-`analyze_dataset.py` 與網站使用同一個 `web/dist/analysis.py`。Python CLI 也支援 `--input https://...csv`、`--exclude ID date`、`--max-rows 4000`。
+瀏覽器開啟 `http://localhost:8765`。也可使用與網站共用分析引擎的 CLI：
 
-## 方法：CRISP-DM
+```bash
+python analyze_dataset.py --problem flood
+python analyze_dataset.py --problem housing
+python analyze_dataset.py --input data/50_Startups.csv --target Profit
+```
 
-1. **Business Understanding**：預測合成洪水分數與歷史房屋成交價；不將係數當作因果。
-2. **Data Understanding**：確認來源、列數、特徵數與目標。洪水為合成資料，房價為 2014–2015 年 King County 交易。
-3. **Data Preparation**：網站兩題各固定抽取 4,000 筆，seed 42；60% 訓練、20% 校準、20% 測試。數值中位數補值、標準化，類別眾數補值與 one-hot，皆只 fit 訓練折。
-4. **Modeling**：訓練集五折 CV 比較保留 1 欄、50%、75%、100% 的 SelectKBest + LinearRegression；以平均 CV RMSE 選擇。全特徵模型與平均值基線一併比較。兩個內建題目都由 CV 選出保留全部特徵。
-5. **Evaluation**：獨立測試集指標、預測圖、區間覆蓋率與寬度；殘差、Q-Q、Jarque–Bera、設計矩陣秩。未宣稱所有回歸假設通過。
-6. **Deployment**：網頁與 CLI 可重跑、自訂 Dataset、下載結果；來源、分割列號、CV 及逐筆區間均保留。
+## 研究與來源
 
-95% conformal 半寬是校準絕對殘差第 `ceil((n_cal + 1) × 0.95)` 順位。新資料與校準資料可交換是其邊際覆蓋前提，不代表每個子群或每次預測都有 95% 覆蓋。小樣本至少保留 19 筆校準，因此 **50 Startups 為 21 訓練 / 19 校準 / 10 測試**。OLS 區間需額外假設，且未校正選模不確定性，僅作參考。
+GPT 協助程式、圖表與文字整理，模型指標由實際程式計算。[NotebookLM 研究筆記](notebooklm_research.md)整理洪水資料的特徵工程、資料洩漏與區間估計；完整摘要與來源可在網站「研究筆記」閱讀。
 
-## 網站樣本的實際結果
+- [scikit-learn：避免資料洩漏](https://scikit-learn.org/stable/common_pitfalls.html)
+- [Conformal prediction 教學](https://arxiv.org/abs/2107.07511)
+- [King County CSV 取得來源](https://github.com/rheera/data-analysis-with-python/blob/main/kc_house_data.csv)
 
-| 題目 | 原始特徵 | 選入編碼特徵 | 測試 RMSE | 測試 R² | 95% PI 實測覆蓋 |
-|---|---:|---:|---:|---:|---:|
-| 洪水分數 | 20 | 20 / 20 | 0.020139 | 0.859509 | 94.625% |
-| King County 房價 | 18 | 18 / 18 | 214,640.38 USD | 0.678480 | 96.375% |
-| 50 Startups（自訂範例） | 4 | 1 / 5 | 7,702.21 | 0.926742 | 100%（測試僅 10 筆） |
-
-房價存在 `sqft_living = sqft_above + sqft_basement` 的精確共線性，程式會警示矩陣秩不足，使用 SVD 最小範數解，個別共線係數不具唯一解。zipcode 在這個基線採數值表示，是模型限制。資料的地理依賴、重複房產及時間外泛化未由隨機測試保證；房價區間較寬且不裁切負下界。
-
-舊洪水報告使用 **50,000 筆與 64/16/20 切分**，OLS RMSE 0.020046、R² 0.843466。舊版與網站的資料範圍不同，不能混用指標。
-
-## GPT 輔助內容與 NotebookLM 摘要
-
-GPT 協助資料研究、Python/網站程式、圖表、數值檢查、報告及部署。數值由程式實際產生。
-
-沿用 **2026-10-20 已在 NotebookLM 實際完成**、超過 100 個中文字的洪水研究摘要；網站與補充報告明示原研究日期及六個來源。研究範圍為洪水與統計方法，未假稱本次重新使用 NotebookLM 研究房價。見 `notebooklm_research.md`、`notebooklm_result.json`、原始提問回覆與證據截圖。
-
-## 繳交檔案
-
-- `web/dist/`：可直接部署的完整網站，含兩題樣本、預先計算結果與共用 Python 引擎。
-- `analyze_dataset.py`：新版主程式，支援兩題及本機/URL CSV。
-- `5113056021_hw2_update.pdf`：新版補充報告，含方法、兩題結果、區間圖與 AI 研究標示。
-- `5113056021_hw2_report.pdf`：舊版 50,000 筆洪水完整報告，作為原始研究附錄。
-- `5113056021_gpt_conversation_updated.pdf`：可取得的舊保存文字與本次更新對話，範圍截至匯出；不包含工具紀錄、內部推理或未取得的其他聊天。
-- `5113056021_gpt_conversation.pdf`：原始 ChatGPT 網頁技術問答截圖 PDF。
-- `5113056021_hw2_updated.zip`：精簡原始碼提交包，不重複包含網站下載區。
-- `tests/test_web_analysis.py`：誤差/覆蓋率獨立重算、分割不重疊、測試/校準標籤不影響選模、小樣本與缺失值測試。
-- `VALIDATION_WEB.md`：新版驗證紀錄；`output/web_validation.json` 為可檢查數值。
-
-舊主程式 `5113056021_hw2.py` 仍保留；它需要完整 1,117,957 筆 `data/train.csv`。此約 59 MB 原檔保留在本機與原始提交包，GitHub/新版精簡包不重複散布；可依 `DATA_LICENSE.md` 從 Kaggle 下載。**新版主程式及網站所需樣本已隨庫附上，不需要 Kaggle 登入。**
-
-重新產生網站示範：`python tools/prepare_web.py`（需本機舊分析樣本與完整房價資料）。重建報告：`python tools/build_update_report.py`（字型/對話來源依本機環境調整）。
-
-## 來源
-
-- [Kaggle Playground Series S4E5](https://www.kaggle.com/competitions/playground-series-s4e5/data)
-- [Kaggle House Sales in King County, USA](https://www.kaggle.com/datasets/harlfoxem/housesalesprediction)
-- [King County 公開 CSV 鏡像](https://github.com/rheera/data-analysis-with-python/blob/main/kc_house_data.csv)
-- [50 Startups 範例](https://github.com/Avik-Jain/100-Days-Of-ML-Code/blob/master/datasets/50_Startups.csv)
-- [scikit-learn 資料洩漏與 Pipeline](https://scikit-learn.org/stable/common_pitfalls.html)
-- [Split conformal prediction 教學](https://arxiv.org/abs/2107.07511)
-
-更多來源與授權記錄見 `sources.md`、`DATA_LICENSE.md`。Plotly.js 與 Papa Parse 為 MIT 授權，原檔保留授權註記；Python/Pyodide 依各專案授權。
-
-## GitHub Pages（選用部署）
-
-本庫附 `.github/workflows/pages.yml`。在 GitHub Settings → Pages 選擇 **GitHub Actions**，再執行 Deploy homework website，即發布 `web/dist`。網站本身是靜態檔，Python 建模在瀏覽器執行，不需要伺服器、金鑰或付費 API。
+更多來源與授權記錄見 [sources.md](sources.md) 與 [DATA_LICENSE.md](DATA_LICENSE.md)。
