@@ -1,0 +1,41 @@
+{
+  "file": "regression_lab_complete_report.pdf",
+  "pages": 35,
+  "sections": {
+    "contents": 2,
+    "infographic": 3,
+    "understanding": 4,
+    "modeling": 5,
+    "evaluation_flood": 6,
+    "evaluation_housing": 7,
+    "uncertainty": 8,
+    "deployment": 9,
+    "ai_research": 10,
+    "references": 11,
+    "conversation_scope": 12,
+    "chat_0": 13,
+    "chat_1": 22,
+    "web_chat": 30
+  },
+  "exported_at": "2026-11-03T01:58:48.580246+08:00",
+  "conversation_messages": 73,
+  "conversation_groups": {
+    "附錄 A｜先前保存的 ChatGPT 協作文字": 39,
+    "附錄 B｜本次修訂、網站部署與文件整理對話": 34
+  },
+  "notebooklm_chinese_characters": 276,
+  "numerical_checks": [
+    "flood: independently verified RMSE, R2, coverage and disjoint splits",
+    "housing: independently verified RMSE, R2, coverage and disjoint splits"
+  ],
+  "sha256": "e598ff3a7e938f295d8e4232846f5af7b31d482779a9384ffbcfc8a1f5d54470",
+  "visual_review": {
+    "all_pages_rendered": true,
+    "pages_reviewed": 35,
+    "detailed_pages": [
+      3,
+      10
+    ],
+    "result": "No clipping, overlap or missing chart marks observed."
+  }
+}

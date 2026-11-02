@@ -9,6 +9,12 @@
 > **專案名稱**：Regression Lab｜多元線性回歸\
 > **資料來源**：Kaggle 洪水合成資料（Playground Series S4E5）與 King County 房價資料
 
+## 專案文件
+
+[下載整合分析報告（PDF）](output/pdf/regression_lab_complete_report.pdf)
+
+文件包含資訊圖表、CRISP-DM 分析、模型評估、GPT 輔助內容、NotebookLM 摘要，以及截至匯出時可取得的對話附錄。
+
 ## 網站畫面
 
 資料集切換與分析設定：
