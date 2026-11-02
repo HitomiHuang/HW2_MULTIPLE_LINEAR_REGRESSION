@@ -15,6 +15,13 @@
 
 文件包含資訊圖表、CRISP-DM 分析、模型評估、GPT 輔助內容、NotebookLM 摘要，以及 ChatGPT 技術問答截圖。
 
+| 內容 | 位置 |
+|---|---|
+| 網站程式、固定樣本與示範結果 | [web/dist](web/dist) |
+| 共用引擎的本機分析入口 | [analyze_dataset.py](analyze_dataset.py) |
+| 最新報告與圖表、問答素材 | [output](output) |
+| NotebookLM 摘要與閱讀來源 | [研究筆記](notebooklm_research.md) |
+
 ## 網站畫面
 
 資料集切換與分析設定：
@@ -76,6 +83,14 @@ python -m http.server 8765 --directory web/dist
 python analyze_dataset.py --problem flood
 python analyze_dataset.py --problem housing
 python analyze_dataset.py --input data/50_Startups.csv --target Profit
+```
+
+可下載 [50 Startups CSV 範例](web/dist/data/50_Startups.csv)測試上傳功能。網站已附固定樣本，不需要下載完整原始資料。重新計算示範結果、檢查分析引擎及重建報告：
+
+```bash
+python tools/prepare_web.py
+python -m unittest discover -s tests -v
+python tools/build_combined_report.py
 ```
 
 ## 研究與來源

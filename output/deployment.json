@@ -43,7 +43,6 @@
     "browser_python_status": "completed",
     "custom_r2": 0.9267,
     "custom_rmse": 7702.2053,
-    "browser_console_errors": 0,
-    "screenshot": "output/evidence/github_pages_live.jpg"
+    "browser_console_errors": 0
   }
 }

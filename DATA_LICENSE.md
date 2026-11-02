@@ -1,25 +1,30 @@
 # 資料來源與授權記錄
 
-下載時間：2026-10-20（台北時間）。
+本儲存庫保留網站使用的固定樣本與 CSV 範例。完整原始下載檔及舊版分析輸出不隨專案附送。
 
-本作業使用 Naiya Khalid 上傳之 **Flood Prediction Dataset**, Kaggle version 2：
-https://www.kaggle.com/datasets/naiyakhalid/flood-prediction-dataset
+## 洪水合成資料
 
-資料卡標示 CC0，並註明來源、蒐集方法與地理涵蓋範圍無法獨立驗證。下載包包含四個 CSV；作業僅附使用的 train.csv，以及用於資料品質說明的 flood.csv。
+- 原競賽：[Regression with a Flood Prediction Dataset，Kaggle S4E5](https://www.kaggle.com/competitions/playground-series-s4e5/data)。
+- 取得來源：[Naiya Khalid，Flood Prediction Dataset，version 2](https://www.kaggle.com/datasets/naiyakhalid/flood-prediction-dataset)。原下載記錄日期為 2026-10-20，包含競賽 train.csv。
+- 原競賽記錄之授權為 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)，下載資料卡另標示 CC0；本專案保留兩個來源及原競賽歸屬資訊。
+- 隨附檔案：`web/dist/data/flood_sample.csv`。此檔從先前固定 50,000 筆抽樣資料，再以 seed 42 抽取 4,000 筆，保留原欄位與目標。
+- 資料為模型生成的合成分數，未驗證為真實洪災機率。
 
-train.csv 的研究脈絡為 Kaggle **Regression with a Flood Prediction Dataset**, Playground Series Season 4 Episode 5：
-https://www.kaggle.com/competitions/playground-series-s4e5/data
+## King County 房價
 
-原競賽資料頁標示 **Creative Commons Attribution 4.0 International (CC BY 4.0)**：
-https://creativecommons.org/licenses/by/4.0/
+- 資料集：[House Sales in King County, USA](https://www.kaggle.com/datasets/harlfoxem/housesalesprediction)。原取得記錄之資料卡標示 CC0。
+- [CSV 鏡像](https://raw.githubusercontent.com/rheera/data-analysis-with-python/main/kc_house_data.csv)。抽樣時移除額外 CSV 索引，再以 seed 42 抽取 4,000 筆。
+- 隨附檔案：`web/dist/data/housing_sample.csv`。來源為 21,613 筆歷史交易；排除 id、date 與 price 後有 18 個預測特徵。
+- 價格為 2014–2015 年交易金額，單位 USD。
 
-原競賽說明資料由深度學習模型生成，分布與原始 Flood Prediction Factors 資料接近但不完全相同。本作業保留 Kaggle 與 Naiya Khalid 的來源資訊及連結。
+## 50 Startups
 
-本作業由 train.csv 固定抽取 50,000 筆並建立訓練／校準／測試分割；未修改隨附的完整 train.csv。抽樣檔、預測與圖表為本作業衍生產出。完整檔案雜湊及抽樣方式見 output/run_metadata.json。
+- [來源 CSV](https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv)。
+- `data/50_Startups.csv` 供 CLI 與測試使用，網站目錄內另附一份供下載和上傳測試。
+- 保留來源連結；不額外宣稱未驗證的資料授權或蒐集方式。
 
-## 修訂版新增資料（2026-11-02）
+## 網站套件與衍生檔案
 
-- House Sales in King County, USA：https://www.kaggle.com/datasets/harlfoxem/housesalesprediction 。來源卡標示 CC0；取得鏡像為 https://raw.githubusercontent.com/rheera/data-analysis-with-python/main/kc_house_data.csv 。鏡像含額外 CSV 索引，網站抽樣前已移除，原始檔保留在 data/kc_house_data.csv。來源有 21,613 筆、21 欄，排除 id/date/price 後 18 個預測特徵；網站固定 seed 42 抽取 4,000 筆。
-- 教師範例 50 Startups：https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv 。依作業指定用作 CSV 功能驗證；保留來源，未額外宣稱未驗證的資料授權或蒐集過程。只有 4 個原始特徵，不充當合規主要題目。
-- 網站洪水樣本由既有 output/tables/analysis_sample.csv 以 seed 42 再抽 4,000 筆；維持原始來源標示與 CC BY 4.0 脈絡。各網站樣本 SHA-256 存在對應 data/*_result.json。
-- 固定版本前端套件：Papa Parse 5.5.3、Plotly.js 2.35.2（MIT）；原始檔保留授權註記。Pyodide 0.27.7 由官方 jsDelivr 發行路徑載入。
+- Papa Parse 5.5.3 與 Plotly.js 2.35.2 採 MIT 授權，`web/dist/vendor/` 原始檔保留授權註記。
+- Pyodide 0.27.7 從官方 jsDelivr 發行路徑載入。
+- 對應 `*_result.json` 保留樣本 SHA-256、切分列號、設定與逐筆結果；圖表及 PDF 為本專案分析與整理的衍生產出。

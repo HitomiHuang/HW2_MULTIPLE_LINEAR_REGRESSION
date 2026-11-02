@@ -11,5 +11,5 @@ web/.git/
 web/.sites-checkout*/
 tools/publish_github.py
 web/dist/check.txt
-!web/dist/downloads/5113056021_hw2_updated.zip
 output/models/*.joblib
+output/custom_analysis.json
