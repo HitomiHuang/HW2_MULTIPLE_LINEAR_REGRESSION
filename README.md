@@ -1,10 +1,15 @@
-# Regression Lab｜多元線性回歸
+# AIoT-DA 課程作業｜AI Vibe Coding 多元線性回歸 HW2
 
-探索資料、挑選特徵，並以預測區間理解模型的不確定性。可使用內建的洪水與房價資料，或匯入自己的 CSV，在瀏覽器中執行完整的線性回歸分析。
+## 我的專案連結
 
-[開啟互動網站](https://hitomihuang.github.io/HW2_MULTIPLE_LINEAR_REGRESSION/)
+- **網站網址**：[https://hitomihuang.github.io/HW2_MULTIPLE_LINEAR_REGRESSION/](https://hitomihuang.github.io/HW2_MULTIPLE_LINEAR_REGRESSION/)
+- **GitHub 儲存庫網址**：[https://github.com/HitomiHuang/HW2_MULTIPLE_LINEAR_REGRESSION](https://github.com/HitomiHuang/HW2_MULTIPLE_LINEAR_REGRESSION)
 
-## 網站預覽
+> **作業主題**：運用 AI 輔助開發多元線性回歸資料分析與預測網站\
+> **專案名稱**：Regression Lab｜多元線性回歸\
+> **資料來源**：Kaggle 洪水合成資料（Playground Series S4E5）與 King County 房價資料
+
+## 網站畫面
 
 資料集切換與分析設定：
 
