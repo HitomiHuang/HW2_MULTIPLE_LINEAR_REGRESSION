@@ -1,9 +1,49 @@
 {
-  "project_id": "appgprj_6ae8adfb0c1081918e7d21098f66dce0",
-  "version": 3,
-  "deployment_id": "appgdep_6ae8bfd250c88191bd6014de2af74bd8",
+  "provider": "GitHub Pages",
+  "url": "https://hitomihuang.github.io/HW2_MULTIPLE_LINEAR_REGRESSION/",
   "status": "succeeded",
   "access_mode": "public",
-  "url": "https://regression-lab-explorer.ivy819.chatgpt.site",
-  "source_commit": "52ebebde95be9dfed28484f4acc5e81c696c2295"
+  "source_branch": "main",
+  "source_commit": "76c0ee7da769d771ea813f7bddcf4590d5f2ec6c",
+  "workflow_run": "https://github.com/HitomiHuang/HW2_MULTIPLE_LINEAR_REGRESSION/actions/runs/41491714790",
+  "assets": {
+    "index.html": {
+      "status": 200,
+      "bytes": 12272
+    },
+    "styles.css": {
+      "status": 200,
+      "bytes": 10642
+    },
+    "app.js": {
+      "status": 200,
+      "bytes": 20298
+    },
+    "worker.js": {
+      "status": 200,
+      "bytes": 1393
+    },
+    "analysis.py": {
+      "status": 200,
+      "bytes": 10967
+    },
+    "data/flood_result.json": {
+      "status": 200,
+      "bytes": 479404
+    },
+    "data/housing_result.json": {
+      "status": 200,
+      "bytes": 472231
+    }
+  },
+  "browser_checks": {
+    "flood_demo_r2": 0.8595,
+    "housing_demo_r2": 0.6785,
+    "custom_csv": "50_Startups.csv via public URL",
+    "browser_python_status": "completed",
+    "custom_r2": 0.9267,
+    "custom_rmse": 7702.2053,
+    "browser_console_errors": 0,
+    "screenshot": "output/evidence/github_pages_live.jpg"
+  }
 }
