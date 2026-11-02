@@ -1,0 +1,15 @@
+.deps/
+tmp/
+__pycache__/
+*.pyc
+data/kaggle_download/
+data/kaggle_flood_original.zip
+data/train.csv
+*.zip
+*.tar.gz
+web/.git/
+web/.sites-checkout*/
+tools/publish_github.py
+web/dist/check.txt
+!web/dist/downloads/5113056021_hw2_updated.zip
+output/models/*.joblib

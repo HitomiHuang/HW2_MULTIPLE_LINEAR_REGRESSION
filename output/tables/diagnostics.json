@@ -1,0 +1,13 @@
+{
+  "reset_F": 397.87760748902247,
+  "reset_p": 2.0843431280581394e-171,
+  "breusch_pagan_LM": 1365.2428931921534,
+  "breusch_pagan_p": 3.1252464909374985e-277,
+  "jarque_bera": 4833.976553870942,
+  "jarque_bera_p": 0.0,
+  "residual_skew": 0.6907092018168164,
+  "residual_kurtosis": 4.31040665806669,
+  "durbin_watson_arbitrary_order": 2.0060489670574757,
+  "max_vif": 1.004610747882541,
+  "independence_note": "No timestamps or spatial groups; independence cannot be established with this dataset. DW is descriptive in an arbitrary row order."
+}

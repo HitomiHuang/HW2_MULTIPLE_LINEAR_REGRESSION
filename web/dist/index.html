@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="HW2 多元線性回歸：雙題目、自訂 CSV、特徵選擇、模型評估與 95% 預測區間。">
+<title>Regression Lab · HW2 多元線性回歸</title>
+<link rel="stylesheet" href="styles.css">
+<script defer src="vendor/papaparse.min.js"></script>
+<script defer src="vendor/plotly.min.js"></script>
+<script defer src="app.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+<a class="brand" href="#"><span class="brand-mark">r<span>²</span></span><span>REGRESSION<br><b>LAB / HW2</b></span></a>
+<div class="side-label">分析工作台</div>
+<nav aria-label="主要導覽">
+<button class="nav active" data-tab="overview"><span>01</span> 模型總覽</button>
+<button class="nav" data-tab="features"><span>02</span> 特徵選擇</button>
+<button class="nav" data-tab="method"><span>03</span> CRISP-DM 流程</button>
+<button class="nav" data-tab="research"><span>04</span> AI 研究紀錄</button>
+<button class="nav" data-tab="deliver"><span>05</span> 繳交與下載</button>
+</nav>
+<div class="side-note"><span class="live-dot"></span>瀏覽器內分析<br><small>資料留在你的瀏覽器。<br>模型使用 scikit-learn 計算。</small></div>
+<div class="student">5113056021<span>MULTIPLE LINEAR REGRESSION</span></div>
+</aside>
+<main>
+<header class="topbar"><span>資料科學 / <b>多元線性回歸</b></span><span class="pill">HW2 · 加總分 2 分功能</span></header>
+<section class="intro"><div class="eyebrow">FROM DATA TO DECISIONS</div><h1>讓資料，說明預測。</h1><p>選擇問題、探索特徵，從線性模型理解結果與不確定性。</p></section>
+<section class="workspace" aria-label="資料集設定">
+<div class="section-heading"><h2>選擇你的研究問題</h2><span class="muted">01 / DATASET</span></div>
+<div class="problem-row"><div class="field grow"><label for="problem">Problem 下拉選單</label><select id="problem"><option value="flood">01 洪水風險分數 · 20 個特徵</option><option value="housing">02 King County 房價 · 18 個特徵</option><option value="custom">03 自訂 Dataset · CSV 網址 / 上傳</option></select></div><div class="problem-copy" id="problem-copy"></div></div>
+<div id="source-info" class="source-info"></div>
+<details id="custom-panel"><summary>使用自己的 Dataset <span>CSV URL / 檔案上傳 ↗</span></summary>
+<div class="custom-controls"><label for="dataset-url">公開 CSV 網址</label><div class="url-row"><input id="dataset-url" type="url" placeholder="https://example.com/dataset.csv"><button id="load-url" class="secondary">載入網址</button></div><div class="file-row"><label class="file-button" for="file">上傳 CSV 檔案<input id="file" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values"></label><button class="text-button" id="example">填入老師的 50 Startups 範例</button></div><small>支援 UTF-8 CSV / TSV，最多 10 MB。網址需允許瀏覽器跨來源讀取（CORS）；受限時可下載後上傳。自訂資料不限作業特徵範圍，系統會另行標示。</small></div>
+</details>
+<div class="settings"><div class="field"><label for="target">預測目標 Target</label><select id="target"></select></div><div class="field"><label for="sample">分析筆數上限</label><select id="sample"><option value="4000">4,000 筆（建議）</option><option value="1000">1,000 筆（快速）</option><option value="10000">10,000 筆</option></select></div><button id="run" class="primary">執行回歸分析 <span>↗</span></button><button id="cancel" class="secondary" hidden>取消</button></div>
+<details class="exclude"><summary>設定排除欄位（ID、日期或不適合預測的欄位）</summary><div id="exclude-fields" class="checkboxes"></div></details>
+<div id="status" class="status" role="status" aria-live="polite">正在載入示範資料…</div>
+</section>
+<section class="panel active" id="overview">
+<div class="section-heading results-heading"><div><span class="eyebrow">MODEL PERFORMANCE</span><h2 id="result-title">模型總覽</h2></div><span id="result-mode" class="tag"></span></div>
+<div id="empty" class="empty" hidden>載入 Dataset 後，點選「執行回歸分析」即可產生結果。</div>
+<div id="result-content">
+<div class="kpis"><article><span>測試 R²</span><strong id="kpi-r2">—</strong><small>解釋測試目標的變異</small></article><article><span>測試 RMSE</span><strong id="kpi-rmse">—</strong><small id="target-unit">越低越好 · 目標原始單位</small></article><article><span>95% 區間實測覆蓋率</span><strong id="kpi-coverage">—</strong><small>獨立測試集 · split-conformal</small></article><article class="accent"><span>選入特徵</span><strong id="kpi-features">—</strong><small id="feature-caption">訓練集五折交叉驗證</small></article></div>
+<div id="notices" class="notices"></div>
+<div class="chart-grid"><article class="card wide"><div class="card-heading"><div><h3>每一次預測，都帶著不確定性</h3><p id="interval-description">95% split-conformal 預測區間</p></div><select aria-label="區間類型" id="interval-type"><option value="conformal">95% Conformal 預測區間</option><option value="mean_ci">95% OLS 平均反應信賴區間</option><option value="ols_pi">95% OLS 單筆預測區間</option></select></div><div id="interval-chart" class="chart" role="img" aria-label="預測值、觀測值與區間"></div><p class="chart-note">顯示最多 100 筆固定抽樣測試案例，按預測值排序；橫軸不是時間。灰帶為區間，圓點為實際值。完整逐筆結果可下載。</p></article><article class="card"><h3>實際值與預測值</h3><p>虛線為理想預測 y = x</p><div id="scatter-chart" class="chart" role="img" aria-label="實際值與預測值散佈圖"></div></article><article class="card"><h3>模型評估比較</h3><p>相同測試集，比較基線與線性回歸。</p><div id="metrics-table" class="table-wrap"></div></article></div>
+<article class="card"><h3>資料與區間說明</h3><p id="split-summary"></p><p>主要區間以獨立校準集絕對殘差第 ceil((n_cal + 1) × 0.95) 順位建立。95% 是在資料可交換前提下的邊際覆蓋目標，不能保證每個子群或單筆預測都有 95% 覆蓋；不裁切區間上下界。OLS 區間另假設線性、獨立、等變異及誤差常態近似。特徵選擇後的 OLS 區間未校正選模不確定性。</p></article>
+</div></section>
+<section class="panel" id="features"><div class="section-heading"><div><span class="eyebrow">LESS, BUT INFORMATIVE</span><h2>特徵選擇與模型診斷</h2></div></div><p>以訓練集五折 CV 比較 1 欄、50%、75% 與 100% 的編碼特徵；每折獨立補值、標準化、編碼及 SelectKBest。選擇平均 RMSE 最小的設定，測試集不參與選模。</p><p id="features-empty" hidden>請先載入 Dataset 並執行分析。</p><div class="chart-grid"><article class="card"><h3>交叉驗證的選擇</h3><div id="selection-chart" class="chart"></div><div id="selection-table" class="table-wrap"></div></article><article class="card"><h3>係數與選入特徵</h3><p>數值欄已標準化，類別欄採 one-hot；係數代表條件關聯。圖顯示絕對值前 15 名。</p><div id="coefficient-chart" class="chart"></div><div id="selected-names" class="chips"></div></article><article class="card"><h3>殘差與擬合值</h3><p>檢查非線性、漏斗形狀與離群值。</p><div id="residual-chart" class="chart"></div></article><article class="card"><h3>殘差常態 Q-Q 圖</h3><p>與常態理論分位數比較；尾部偏離表示常態假設可能不足。</p><div id="qq-chart" class="chart"></div></article></div><article class="card"><h3>五項回歸假設與限制</h3><div id="diagnostics"></div><p>線性：觀察殘差型態。等變異：觀察殘差散布。常態：Q-Q 與 Jarque–Bera。共線性：檢查設計矩陣秩。獨立性：需依採樣流程判斷，隨機表格列序不能證明獨立；房價可能有空間或同一房產重複交易的依賴。若部署到新時期或地區，須重新切分與校準。</p></article></section>
+<section class="panel" id="method"><span class="eyebrow">THE COMPLETE WORKFLOW</span><h2>CRISP-DM：從問題到部署</h2><div id="crisp-cards" class="crisp-grid"></div><article class="card"><h3>特徵數的計算方式</h3><p>原始輸入特徵不包含 Target、索引、ID 與日期。洪水資料為 20 個；King County 房價資料為 18 個。類別 one-hot 後欄數另外列示。50 Startups 只有 4 個原始特徵，可驗證自訂 Dataset，但不充當符合 14–39 特徵的主題。</p><h3>重現方法</h3><p>網頁使用固定 seed = 42 的 4,000 筆樣本，一般切為 60% 訓練、20% 校準、20% 測試；小樣本保留至少 19 筆校準。首次顯示預先計算結果；按下執行後由瀏覽器 Python 實際重新建模。原始洪水報告另使用 50,000 筆與 64/16/20 切分，數值不同是因為分析範圍不同。</p></article></section>
+<section class="panel" id="research"><span class="eyebrow">TRANSPARENT ASSISTANCE</span><h2>AI 研究紀錄</h2><article class="card"><h3>GPT 輔助內容</h3><p>GPT 協助資料來源查找、Python 與網站程式、特徵選擇流程、區間計算、圖表、測試及文字整理。資料來自公開來源，顯示數值由實際程式產生。網站與更新補充報告由 GPT 協作完成，未宣稱為獨立人工分析。</p></article><article class="card"><h3>NotebookLM 摘要</h3><p>沿用 2026-10-20 已完成的洪水題目研究，非本次新生成的 NotebookLM 回覆；原始問答與六個來源保留於作業檔案。</p><div id="notebook-summary"></div><a id="notebook-link" target="_blank" rel="noopener">開啟研究筆記本 ↗</a><div id="research-sources" class="sources"></div></article><article class="card"><h3>研究範圍</h3><p>NotebookLM 摘要研究洪水特徵工程、資料洩漏與區間估計；它沒有對第二題房價結果提出結論。房價分析使用同一個經驗證的線性回歸流程，來源與限制另行標示。</p></article></section>
+<section class="panel" id="deliver"><span class="eyebrow">READY TO REVIEW</span><h2>繳交與下載</h2><article class="card"><h3>加總分 2 分功能驗收</h3><ol><li>使用 Problem 下拉選單切換「洪水風險分數」與「King County 房價」。</li><li>展開「使用自己的 Dataset」，貼上 CSV 網址或上傳檔案。</li><li>選擇 Target 與排除欄位，再按「執行回歸分析」。</li><li>檢查特徵選擇、測試指標及 95% 預測區間，下載逐筆結果。</li></ol></article><div class="download-grid"><button id="download-json" class="secondary">下載分析結果 JSON</button><button id="download-csv" class="secondary">下載逐筆預測 CSV</button><button id="download-data" class="secondary">下載目前 Dataset</button><button id="print" class="secondary">列印目前結果 / 存成 PDF</button><a class="secondary" href="downloads/5113056021_hw2_update.pdf" download>下載新版補充報告 PDF</a><a class="secondary" href="downloads/5113056021_hw2_report.pdf" download>下載原始完整分析報告</a><a class="secondary" href="downloads/5113056021_gpt_conversation_updated.pdf" download>下載本次更新與保存對話 PDF</a><a class="secondary" href="downloads/5113056021_gpt_conversation.pdf" download>下載原始 ChatGPT 對話 PDF</a><a class="secondary" href="downloads/5113056021_hw2_updated.zip" download>下載 GitHub 提交原始碼 ZIP</a></div><article class="card"><h3>資料來源</h3><ul><li><a href="https://www.kaggle.com/competitions/playground-series-s4e5/data" target="_blank" rel="noopener">Kaggle Playground Series S4E5 · 洪水合成資料</a>；原始報告 50,000 筆，網站固定抽樣 4,000 筆。</li><li><a href="https://www.kaggle.com/datasets/harlfoxem/housesalesprediction" target="_blank" rel="noopener">Kaggle House Sales in King County, USA</a>；21,613 筆，網站固定抽樣 4,000 筆。透過公開 GitHub 鏡像取得。</li><li><a href="https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv" target="_blank" rel="noopener">老師指定的 50 Startups 自訂網址範例</a>；50 筆，4 個原始特徵。</li></ul><p>本網頁為學術模型練習。洪水資料為合成分數；房價資料為 2014–2015 年 King County 交易，不能解讀為目前市場估價。zipcode 在這個基線採數值表示，並不代表郵遞區號具有真實距離順序。</p></article><article class="card"><h3>GitHub 與對話範圍</h3><p><a href="https://github.com/HitomiHuang/HW2_MULTIPLE_LINEAR_REGRESSION" target="_blank" rel="noopener">開啟公開 GitHub 作業儲存庫 ↗</a>。原始碼 ZIP 包含 README 與 GitHub Pages 自動部署設定，可部署同一網站。既有對話 PDF 收錄原始 ChatGPT 網頁問答；本次更新另附協作紀錄，未宣稱已取得所有歷次 Codex 對話。完整歷史對話如課程要求，仍須從原平台匯出。</p></article></section>
+<footer>5113056021 · HW2 Multiple Linear Regression <span>CRISP-DM / FEATURE SELECTION / PREDICTION INTERVALS</span></footer>
+</main></body></html>

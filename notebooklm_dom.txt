@@ -1,0 +1,71 @@
+- button "Google 應用程式":
+- link "Gemini Notebook 首頁":
+  - /url: /
+  - img "Gemini Notebook 標誌"
+- textbox: HW2 洪水分數的多元線性回歸研究
+- generic "建立筆記本":
+  - button "建立筆記本":
+    - img: add_2
+- generic "共用筆記本":
+  - button "共用筆記本":
+    - img: share_1
+- generic "筆記本設定":
+  - button "筆記本設定":
+    - img: more_vert
+- generic "設定":
+  - button "設定":
+    - img: settings
+- button "Sources":
+  - generic: Sources
+- button "對話":
+  - generic: 對話
+- button "Studio":
+  - generic: Studio
+- text: check_box check_box check_box check_box check_box check_box check_box check_box
+- button "關閉記事":
+  - img: arrow_back
+- textbox "可編輯記事標題": 洪水預測研究
+- button "刪除記事":
+  - img: delete
+- generic: 【研究摘要】
+- text: Kaggle 洪水分數競賽官方說明，其資料集是由深度學習模型基於「原始資料集」生成的合成資料，分佈僅接近原始資料，非已驗證的真實觀測
+- 'button "1: Regression with a Flood Prediction Dataset | Kaggle"':
+  - 'generic "1: Regression with a Flood Prediction Dataset | Kaggle"': "1"
+- text: 。Kaggle 討論中，參賽者提出「20 個特徵為等價偽隨機數」之假說，據此建議採用無視順序的列總和與跨欄排序進行對稱特徵工程
+- 'button "2: Regression with a Flood Prediction Dataset | Kaggle"':
+  - 'generic "2: Regression with a Flood Prediction Dataset | Kaggle"': "2"
+- 'button "3: Regression with a Flood Prediction Dataset | Kaggle"':
+  - 'generic "3: Regression with a Flood Prediction Dataset | Kaggle"': "3"
+- text: 。
+- text: 在特徵選擇方面，SelectKBest 依單變量統計檢定篩選
+- 'button "4: 1.13. Feature selection — scikit-learn 1.9.1 documentation"':
+  - 'generic "4: 1.13. Feature selection — scikit-learn 1.9.1 documentation"': "4"
+- text: ，RFE 則依模型權重遞歸剔除
+- 'button "5: 1.13. Feature selection — scikit-learn 1.9.1 documentation"':
+  - 'generic "5: 1.13. Feature selection — scikit-learn 1.9.1 documentation"': "5"
+- text: ；若特徵等價假說成立，特徵選擇未必需要刪欄
+- 'button "2: Regression with a Flood Prediction Dataset | Kaggle"':
+  - 'generic "2: Regression with a Flood Prediction Dataset | Kaggle"': "2"
+- text: 。為避免資料洩漏，必須嚴格切分訓練與測試集，並透過 scikit-learn 的 Pipeline 將預處理與模型串接，確保 fit 僅作用於訓練集
+- 'button "6: 12. Common pitfalls and recommended practices — scikit-learn 1.9.1 documentation"':
+  - 'generic "6: 12. Common pitfalls and recommended practices — scikit-learn 1.9.1 documentation"': "6"
+- button:
+  - img: more_horiz
+- text: 。
+- text: 估計不確定性時，statsmodels 的
+- code: get_prediction
+- text: 可計算平均反應信賴區間（含模型參數誤差）與單一新觀測預測區間（多含個體隨機誤差而更寬）
+- 'button "9: statsmodels.regression.linear_model.OLSResults.get_prediction — statsmodels 0.15.0"':
+  - 'generic "9: statsmodels.regression.linear_model.OLSResults.get_prediction — statsmodels 0.15.0"': "9"
+- text: 。若導入符合性預測（Conformal Prediction），其統計保證需滿足校準與新資料的可交換性，以提供無分佈假設的邊際覆蓋
+- 'button "10: [2107.07511] A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification"':
+  - 'generic "10: [2107.07511] A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification"': "10"
+- 'button "11: [2107.07511] A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification"':
+  - 'generic "11: [2107.07511] A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification"': "11"
+- text: 。
+- img: info
+- generic: 儲存的回覆僅供檢視
+- button "編輯記事":
+  - img: edit_note
+  - generic: 編輯記事
+- generic: 現在可以回覆問題了。

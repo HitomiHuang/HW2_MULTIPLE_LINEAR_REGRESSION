@@ -1,0 +1,15 @@
+{
+  "verified_in_browser": true,
+  "method": "Screenshots captured directly from the ChatGPT website after five real questions and generated responses.",
+  "conversation_url": "https://chatgpt.com/c/6ad6627a-9334-83ee-9edd-0bd548711c77",
+  "exported_at": "2026-10-20 02:38:05+08:00",
+  "screenshots": [
+    "output/evidence/chatgpt_web_01.jpg",
+    "output/evidence/chatgpt_web_02.jpg",
+    "output/evidence/chatgpt_web_03.jpg",
+    "output/evidence/chatgpt_web_04.jpg",
+    "output/evidence/chatgpt_web_05.jpg",
+    "output/evidence/chatgpt_web_06.jpg"
+  ],
+  "scope": "This five-question technical discussion in ChatGPT web; previous Codex collaboration text is not included."
+}
