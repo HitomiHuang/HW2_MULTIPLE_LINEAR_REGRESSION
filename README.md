@@ -2,7 +2,7 @@
 
 探索資料、挑選特徵，並以預測區間理解模型的不確定性。可使用內建的洪水與房價資料，或匯入自己的 CSV，在瀏覽器中執行完整的線性回歸分析。
 
-[開啟互動網站](https://regression-lab-explorer.ivy819.chatgpt.site)
+[開啟互動網站](https://hitomihuang.github.io/HW2_MULTIPLE_LINEAR_REGRESSION/)
 
 ## 網站預覽
 
@@ -76,3 +76,9 @@ GPT 協助程式、圖表與文字整理，模型指標由實際程式計算。[
 - [King County CSV 取得來源](https://github.com/rheera/data-analysis-with-python/blob/main/kc_house_data.csv)
 
 更多來源與授權記錄見 [sources.md](sources.md) 與 [DATA_LICENSE.md](DATA_LICENSE.md)。
+
+## GitHub Pages 部署
+
+網站由 GitHub Actions 將 `web/dist/` 發布至 GitHub Pages。推送網站檔案或部署設定到 `main` 會自動更新，也可在 Actions 手動執行 **Deploy Regression Lab**。
+
+網站採用相對路徑，可在 GitHub Pages 的專案子路徑載入資料、圖表與 Python Worker。Python 分析在瀏覽器內執行，無須後端伺服器。
