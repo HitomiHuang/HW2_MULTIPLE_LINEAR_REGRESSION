@@ -157,10 +157,11 @@ def plot_diagnostics(results):
 
 def main():
  results={k:json.loads((ROOT/f'web/dist/data/{k}_result.json').read_text(encoding='utf-8')) for k in ['flood','housing']}
- nb=json.loads((ROOT/'notebooklm_result.json').read_text(encoding='utf-8'))
+ nb=json.loads((ROOT/'output/evidence/notebooklm_revision/research_result.json').read_text(encoding='utf-8'))
  validation=json.loads((ROOT/'output/web_validation.json').read_text(encoding='utf-8'))
  webqa=json.loads((ROOT/'output/evidence/chatgpt_revision/qa_index.json').read_text(encoding='utf-8'))
  assert webqa['verified_in_browser'] and len(webqa['questions'])==6
+ assert nb['verified_in_notebooklm'] and nb['selected_web_sources']==10
  assert len(re.findall(r'[\u4e00-\u9fff]',nb['summary']))>=100
  checks=[]
  for key,r in results.items():
@@ -175,6 +176,11 @@ def main():
  story=[]
  def add(text,style='body'):story.append(P(text,style))
  def section(title,key):story.append(PageBreak());story.append(heading(title,key))
+ def credit(gpt='',notebook=''):
+  labels=[]
+  if gpt:labels.append('GPT 輔助內容〔'+gpt+'〕')
+  if notebook:labels.append('NotebookLM 摘要〔'+notebook+'〕')
+  add('；'.join(labels),'small')
  add('AIoT-DA 課程作業 | AI Vibe Coding HW2','eyebrow')
  add('多元線性回歸\n整合分析報告','cover')
  add('Regression Lab','h2')
@@ -190,6 +196,7 @@ def main():
  story.append(toc);story.append(Spacer(1,8*mm))
  add('閱讀方式：先看資訊圖表與兩個題目的評估結果，再查看分析方法與 AI 研究；本次 ChatGPT 技術問答截圖集中於文末。','small')
  section('資訊圖表｜從資料到預測','infographic');story.append(Infographic(results))
+ credit('G1、G3、G4、G6')
  section('01 / 問題定義與資料理解','understanding')
  add('Business Understanding','h2')
  add('洪水題目：以 20 個環境與管理分數預測 FloodProbability，研究線性模型是否能擷取合成資料中的規律。此分數未經驗證為真實洪災發生機率，不能作為防災警報。 [D1]')
@@ -200,15 +207,18 @@ def main():
  for key,label in [('flood','洪水'),('housing','房價')]:
   r=results[key];add(label+'樣本 SHA-256：'+r['dataset_sha256'],'small')
  add('資料限制：洪水為合成分數；房價可能有同一房產重複交易、空間依賴與時間差異。來源的資料生成或蒐集背景，會限制可作出的推論。')
+ credit('G1、G4、G5','N1、N7、N9')
  section('02 / 資料準備與建模','modeling')
  add('Data Preparation','h2')
  add('固定 seed = 42，每題切為訓練 2,400、校準 800、測試 800。先分割再處理：數值欄以訓練折中位數補值、標準化；類別欄以訓練折眾數補值與 one-hot 編碼。未知類別採忽略處理，預處理與特徵選擇放在 Pipeline 內，測試標籤不參與選模。 [M1]')
+ credit('G1、G2','N3、N4、N8')
  add('Modeling 與 Feature Selection','h2')
  add('比較平均值基線、全特徵 LinearRegression，以及 SelectKBest + LinearRegression。訓練集五折 CV 比較保留 1 欄、50%、75% 與全部編碼特徵，依平均 CV RMSE 選擇。類別數可能隨折改變，因此保留欄數按各訓練折維度計算。 [M2]')
  for key,label in [('flood','洪水：CV RMSE，單位合成分數'),('housing','房價：CV RMSE，單位美元')]:
   add(label,'h2');r=results[key]
   story.append(table(['保留比例','最終欄數','平均 CV RMSE','折間 SD'],[[f"{v['fraction']*100:.1f}%",v['k'],f"{v['rmse']:.6g}",f"{v['sd']:.6g}"] for v in r['selection']]))
  add('本次候選設定中，兩題都由 CV 選出保留全部特徵。特徵選擇不必然刪欄；本報告如實保留此結果，未依測試集挑選設定。','small')
+ credit('G2')
  for key,label in [('flood','洪水'),('housing','房價')]:
   section('03 / Evaluation：'+label,'evaluation_'+key)
   r=results[key];m=r['metrics'][-1]
@@ -220,15 +230,18 @@ def main():
   add(f"選入 {len(r['selected_features'])} / {r['encoded_features']} 欄。測試 MSE = {m['mse']:.8f}"+('。' if key=='flood' else ' USD²。')+f"調整 R² = {m['adjusted_r2']:.6f}；95% 區間實測覆蓋率 {r['interval']['coverage']*100:.3f}%，平均寬度 {r['interval']['width']:.6f} {unit}。")
   if key=='flood':add('相較平均值基線，線性回歸降低測試誤差；仍有未被線性模型解釋的雜訊與偏差。這些結果描述本次相似分布樣本，不應直接推廣至真實洪災決策。')
   else:add('房價偏態與高價離群值使誤差及區間較大。sqft_living = sqft_above + sqft_basement 造成精確共線性，模型採 SVD 最小範數解，個別共線係數不具唯一解。zipcode 的數值表示也是此基線的簡化。跨年份或地區部署需重新評估。')
+  credit('G4')
  section('04 / 預測區間與模型診斷','uncertainty')
  add('主要區間：95% split-conformal','h2')
  add('用獨立校準集的絕對殘差取第 ceil((n_cal + 1) × 0.95) 順位為半寬。800 筆校準取第 761 順位；測試集只評估覆蓋率與誤差，不決定半寬。其邊際覆蓋需要校準與新資料可交換，並不保證每個價位或地區子群都達 95%。區間未裁切上下界。 [M4]')
  add('OLS 平均反應信賴區間與單筆預測區間','h2')
  add('網站另提供 95% OLS mean CI 與 observation PI，以設計矩陣 SVD 偽逆求 leverage，自由度為訓練筆數減矩陣秩。單筆 PI 多含新觀測的隨機誤差，通常較寬。OLS 區間需額外假設，且未校正選模不確定性，作為參考。 [M3]')
+ credit('G3','N6、N9')
  story.append(image(diag,height=92*mm))
  add('上排洪水、下排房價；左圖為訓練殘差，右圖為常態 Q-Q。圖使用固定間隔取出的訓練點。','small')
  story.append(table(['診斷','洪水','房價'],[['Jarque–Bera p',f"{results['flood']['diagnostics']['jarque_bera_p']:.3g}",'小於浮點數顯示範圍'],['設計矩陣秩 / 欄數','21 / 21','18 / 19'],['殘差自由度','2,379','2,382']],[70*mm,(WIDTH-70*mm)/2,(WIDTH-70*mm)/2]))
  add('線性與等變異以殘差圖檢視；常態以 Q-Q 與 Jarque–Bera 檢視；共線性以矩陣秩辨識；獨立性需依採樣流程判斷。隨機表格列序不適合當作時間獨立性的證據，本報告未宣稱五項假設全部通過。','small')
+ credit('G4、G5')
  section('05 / Deployment 與自訂資料','deployment')
  add('GitHub Pages 與瀏覽器分析','h2')
  add('網站已發布至 GitHub Pages，透過 GitHub Actions 將 web/dist 靜態檔部署。推送網站檔案或部署設定到 main 會自動更新；Python/scikit-learn 透過 Pyodide 在 Web Worker 內執行，不需要後端推論服務。')
@@ -240,14 +253,28 @@ def main():
  s=validation['startups'];m=s['metrics'][-1]
  add('50 Startups：實際執行範例','h2')
  add(f"以 Profit 為目標，4 個原始特徵（含 State）編碼為 5 欄，CV 選入 {len(s['selected_features'])} 欄；測試 RMSE {m['rmse']:.4f}、R² {m['r2']:.6f}。為給有限的 95% conformal 區間，至少保留 19 筆校準，本例分為訓練 21 / 校準 19 / 測試 10。測試僅 10 筆，100% 實測覆蓋不可解讀為穩定表現。")
- section('06 / GPT 輔助內容與 NotebookLM 摘要','ai_research')
- add('GPT 輔助內容','h2')
- add('GPT 協助公開資料研究、Python 與網站程式、特徵選擇與資料洩漏檢查、區間計算、圖表、測試、文件整理，以及 GitHub Pages 部署。模型指標來自實際程式，不由語言模型臆測；係數不作因果詮釋。')
+ credit('G3、G6')
+ section('06 / GPT 輔助內容','ai_research')
+ add('正文的「GPT 輔助內容」標記，對應以下六組 ChatGPT 問答；G1–G6 的問答截圖收錄於文末。採用的文字已依本專案流程整理。')
+ story.append(table(['編號','採用內容','報告位置'],[
+  ['G1','CRISP-DM 六階段、訓練／校準／測試分工','資訊圖表、問題定義、資料準備'],
+  ['G2','Pipeline 每折重新 fit；特徵選擇可保留全部欄位','資料準備與建模'],
+  ['G3','CI／PI／conformal 的區分、校準順位與小樣本限制','預測區間、50 Startups 範例'],
+  ['G4','RMSE／R² 與覆蓋率解讀、共線性與診斷範圍','兩題 Evaluation、模型診斷'],
+  ['G5','隨機表格的獨立性限制、時間／地區／房產群組驗證','資料限制、模型診斷'],
+  ['G6','GitHub Pages、瀏覽器分析、可重現性與 CORS','Deployment 與自訂資料']
+ ],[18*mm,92*mm,WIDTH-110*mm]))
+ add('數值與解釋的來源','h2')
+ add('樣本數、特徵數、CV 結果、模型誤差與覆蓋率來自本專案資料及程式輸出；GPT 協助方法說明、結果解讀、程式與文件整理。G4 的獨立性建議採納 G5 的適用範圍澄清：隨機表格列序不能當成時間自相關證據。')
+ add('NotebookLM 研究內容以「NotebookLM 摘要」另行標註，N1–N10 對應其閱讀的網路來源；完整摘要與研究筆記見下一節。')
+ section('07 / NotebookLM 摘要','notebooklm_summary')
+ add('本次在 NotebookLM 使用 Fast Research 搜尋同主題解法，匯入三份大學教材，並與 Kaggle 資料及討論、scikit-learn、statsmodels 與 conformal prediction 論文共十份網路來源交叉整理。','small')
  add('NotebookLM 摘要','h2')
- add('採用既有於 2026-10-20 實際完成並保存的洪水研究。摘要共 276 個中文字，保留原意與 N1–N6 引用；這不是本次重新生成的 NotebookLM 回覆，也不代表房價結果的研究結論。','small')
  for para in nb['summary'].split('\n\n'):add(para)
- story.append(link('研究筆記本：'+nb['notebook_url'],nb['notebook_url']))
- add('原始證據：notebooklm_raw.txt 保存兩輪提問與回覆，notebooklm_result.json 保存摘要與來源，原 NotebookLM 頁面截圖保存於 output/evidence/notebooklm_research.jpg。','small')
+ credit(notebook='N1–N10')
+ add('研究內容在本專案的應用','h2')
+ add('已採用：以 Pipeline 在訓練折內補值、編碼與特徵選擇；以獨立測試集評估；分別說明 OLS 與 conformal 區間的條件。這些說明已在「資料準備與建模」及「預測區間與模型診斷」旁標註 NotebookLM 摘要來源。')
+ add('待驗證：將列總和或跨欄排序做為候選特徵工程，再與目前基線比較訓練集 CV 誤差。本報告未把這項網路解法當成已完成的實驗結果。')
  section('參考來源與重現資料','references')
  refs=[('D1','Kaggle：Regression with a Flood Prediction Dataset','https://www.kaggle.com/competitions/playground-series-s4e5/data'),('D2','Kaggle：House Sales in King County, USA','https://www.kaggle.com/datasets/harlfoxem/housesalesprediction'),('D3','50 Startups CSV 範例','https://raw.githubusercontent.com/Avik-Jain/100-Days-Of-ML-Code/master/datasets/50_Startups.csv'),('M1','scikit-learn：Common pitfalls and recommended practices','https://scikit-learn.org/stable/common_pitfalls.html'),('M2','scikit-learn：Feature selection','https://scikit-learn.org/stable/modules/feature_selection.html'),('M3','statsmodels：OLSResults.get_prediction','https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.OLSResults.get_prediction.html'),('M4','Angelopoulos and Bates：A Gentle Introduction to Conformal Prediction','https://arxiv.org/abs/2107.07511')]
  for ident,title,url in refs:story.append(link('['+ident+'] '+title+'\n'+url,url))
@@ -257,7 +284,7 @@ def main():
  for text in ['python -m pip install -r requirements.txt','python analyze_dataset.py --problem flood','python analyze_dataset.py --problem housing','python analyze_dataset.py --input data/50_Startups.csv --target Profit','python -m unittest discover -s tests -v']:add(text,'small')
  add('主分析引擎：web/dist/analysis.py；網站樣本與示範結果：web/dist/data/；既有數值檢查與部署結果：output/web_validation.json、output/deployment.json。')
  for i,q in enumerate(webqa['questions'],1):
-  section('ChatGPT 技術問答 '+str(i)+'｜'+q['topic'],'qa_'+str(i))
+  section('ChatGPT 技術問答 G'+str(i)+'｜'+q['topic'],'qa_'+str(i))
   for j,rel in enumerate(q['screenshots']):
    if j:story.append(PageBreak());add('問答 '+str(i)+'｜續圖','h2')
    story.append(image(ROOT/rel,height=226*mm))
@@ -269,6 +296,13 @@ def main():
   assert term in all_text,term
  assert 'https://hitomihuang.github.io/HW2_MULTIPLE_LINEAR_REGRESSION/' in all_text
  assert nb['summary'].split('\n\n')[0][:24] in all_text.replace('\n','')
+ for paragraph in nb['summary'].split('\n\n'):
+  assert re.sub(r'\s+','',paragraph) in re.sub(r'\s+','',all_text)
+ for i in range(1,7):assert 'G'+str(i) in all_text
+ for key in ['infographic','understanding','modeling','evaluation_flood','evaluation_housing','uncertainty','deployment']:
+  assert 'GPT 輔助內容' in (reader.pages[doc.sections[key]-1].extract_text() or ''),key
+ for key in ['understanding','modeling','uncertainty']:
+  assert 'NotebookLM 摘要' in (reader.pages[doc.sections[key]-1].extract_text() or ''),key
  for removed in ['先前保存的 ChatGPT 協作文字','本次修訂、網站部署與文件整理對話','ChatGPT 網頁問答原始截圖','請幫我組成文件PDF','實際網路截圖','實際網頁截圖','提問時提供了本專案的實驗設定與數值','實際對話：','網頁顯示模型：','問答 4 的一般獨立性檢查建議','獨立性診斷的適用條件另於下一組問答補充','擷取時間：','ChatGPT 實際網頁畫面',webqa['conversation_url']]:
   assert removed not in all_text,removed
  screenshot_checks=[]
@@ -281,7 +315,7 @@ def main():
   embedded=PILImage.open(BytesIO(embedded_bytes)).convert('RGB')
   assert np.array_equal(np.asarray(original),np.asarray(embedded)),q['topic']
   screenshot_checks.append({'topic':q['topic'],'path':q['screenshots'][0],'sha256':hashlib.sha256((ROOT/q['screenshots'][0]).read_bytes()).hexdigest(),'original_pixels_preserved':True,'original_jpeg_bytes_preserved':True})
- manifest={'file':destination.name,'pages':len(reader.pages),'sections':doc.sections,'exported_at':STAMP.isoformat(),'chatgpt_web_qa_count':len(webqa['questions']),'chatgpt_conversation_url':webqa['conversation_url'],'screenshot_checks':screenshot_checks,'notebooklm_chinese_characters':len(re.findall(r'[\u4e00-\u9fff]',nb['summary'])),'numerical_checks':checks,'prior_dialogue_appendices_removed':True,'sha256':hashlib.sha256(destination.read_bytes()).hexdigest()}
+ manifest={'file':destination.name,'pages':len(reader.pages),'sections':doc.sections,'exported_at':STAMP.isoformat(),'chatgpt_web_qa_count':len(webqa['questions']),'chatgpt_conversation_url':webqa['conversation_url'],'screenshot_checks':screenshot_checks,'notebooklm_chinese_characters':len(re.findall(r'[\u4e00-\u9fff]',nb['summary'])),'notebooklm_research_record':'output/evidence/notebooklm_revision/research_result.json','ai_attribution_markers':{'GPT 輔助內容':all_text.count('GPT 輔助內容'),'NotebookLM 摘要':all_text.count('NotebookLM 摘要')},'numerical_checks':checks,'prior_dialogue_appendices_removed':True,'sha256':hashlib.sha256(destination.read_bytes()).hexdigest()}
  (OUT/'report_manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
  print(json.dumps(manifest,ensure_ascii=False,indent=2))
 

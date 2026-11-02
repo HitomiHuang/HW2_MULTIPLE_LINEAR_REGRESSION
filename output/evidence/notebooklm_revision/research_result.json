@@ -1,0 +1,97 @@
+{
+  "verified_in_notebooklm": true,
+  "notebook_title": "HW2 多元線性回歸：洪水分數與房價研究",
+  "saved_note_title": "NotebookLM 摘要｜洪水與房價多元線性回歸",
+  "retrieved_date": "2026-11-03",
+  "method": "Used NotebookLM Fast Research on the web, reviewed results, imported three university teaching sources and the King County source, excluded the previous saved note, requested a new cited synthesis, clarified scope in a follow-up, and saved the final response as a note.",
+  "selected_web_sources": 10,
+  "newly_imported_web_sources": 4,
+  "summary": "在 Kaggle 洪水預測競賽中，參賽者假說 20 個特徵為等價偽隨機數，並提出「列總和」與跨欄排序等對稱特徵工程作為候選解法，惟其效果仍須經訓練集交叉驗證，不可斷言已優於原始線性回歸。在資料特性與外推限制上，洪水資料集係由深度學習模型生成的合成資料，分佈僅接近原始資料而非真實觀測；King County 房價則為 2014 至 2015 年的真實歷史房屋交易記錄。若將模型外推至資料範圍之外，預測力將受限。 〔N1、N2、N7、N9〕\n\n依據 UBC 與 scikit-learn 指南，標準流程應先切分訓練與測試集，再執行補值、縮放與單熱編碼；需注意 OLS 估計並非必須標準化。為防止資料洩漏，應將 SelectKBest 特徵選擇與模型封裝至 Pipeline 中，使 fit 僅作用於每個 CV 的訓練折，測試集則嚴格保留至最終評估。 〔N3、N4、N8、N10〕\n\n在相同 OLS 模型、信賴水準與特徵條件下，平均反應信賴區間僅估計總體均值不確定性，而單一新觀測預測區間因包含個體隨機誤差，範圍必定較寬。若採用 Split-Conformal 預測，雖可提供無分佈假設的保證，但需滿足可交換性且僅限邊際覆蓋。尚待驗證的改進建議，是將對稱特徵工程建構為自訂轉換器併入 Pipeline，透過 CV 嚴格驗證其效益。 〔N2、N6、N9〕",
+  "summary_exact_clipboard": "# NotebookLM 摘要\n\n在 Kaggle 洪水預測競賽中，參賽者假說 20 個特徵為等價偽隨機數，並提出「列總和」與跨欄排序等對稱特徵工程作為候選解法，惟其效果仍須經訓練集交叉驗證，不可斷言已優於原始線性回歸。在資料特性與外推限制上，洪水資料集係由深度學習模型生成的合成資料，分佈僅接近原始資料而非真實觀測；King County 房價則為 2014 至 2015 年的真實歷史房屋交易記錄。若將模型外推至資料範圍之外，預測力將受限。\n\n依據 UBC 與 scikit-learn 指南，標準流程應先切分訓練與測試集，再執行補值、縮放與單熱編碼；需注意 OLS 估計並非必須標準化。為防止資料洩漏，應將 SelectKBest 特徵選擇與模型封裝至 Pipeline 中，使 fit 僅作用於每個 CV 的訓練折，測試集則嚴格保留至最終評估。\n\n在相同 OLS 模型、信賴水準與特徵條件下，平均反應信賴區間僅估計總體均值不確定性，而單一新觀測預測區間因包含個體隨機誤差，範圍必定較寬。若採用 Split-Conformal 預測，雖可提供無分佈假設的保證，但需滿足可交換性且僅限邊際覆蓋。尚待驗證的改進建議，是將對稱特徵工程建構為自訂轉換器併入 Pipeline，透過 CV 嚴格驗證其效益。",
+  "chinese_characters_excluding_citations": 370,
+  "summary_editing": "Removed the Markdown heading and grouped the original inline citations into source-level N references. Summary wording is unchanged.",
+  "paragraph_source_ids": [
+    [
+      "N1",
+      "N2",
+      "N7",
+      "N9"
+    ],
+    [
+      "N3",
+      "N4",
+      "N8",
+      "N10"
+    ],
+    [
+      "N2",
+      "N6",
+      "N9"
+    ]
+  ],
+  "sources": [
+    {
+      "id": "N1",
+      "title": "Kaggle S4E5：官方資料說明",
+      "url": "https://www.kaggle.com/competitions/playground-series-s4e5/data",
+      "imported": true
+    },
+    {
+      "id": "N2",
+      "title": "Kaggle：Sorting along the feature axis as feature engineering",
+      "url": "https://www.kaggle.com/competitions/playground-series-s4e5/discussion/499579",
+      "imported": true
+    },
+    {
+      "id": "N3",
+      "title": "scikit-learn：Feature selection",
+      "url": "https://scikit-learn.org/stable/modules/feature_selection.html",
+      "imported": true
+    },
+    {
+      "id": "N4",
+      "title": "scikit-learn：Common pitfalls and recommended practices",
+      "url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "imported": true
+    },
+    {
+      "id": "N5",
+      "title": "statsmodels：OLSResults.get_prediction",
+      "url": "https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.OLSResults.get_prediction.html",
+      "imported": true
+    },
+    {
+      "id": "N6",
+      "title": "Angelopoulos and Bates：A Gentle Introduction to Conformal Prediction",
+      "url": "https://arxiv.org/abs/2107.07511",
+      "imported": true
+    },
+    {
+      "id": "N7",
+      "title": "Kaggle：House Sales in King County, USA",
+      "url": "https://www.kaggle.com/datasets/harlfoxem/housesalesprediction",
+      "imported": true
+    },
+    {
+      "id": "N8",
+      "title": "UBC CPSC 330：Preprocessing and sklearn pipelines",
+      "url": "https://ubc-cs.github.io/cpsc330-2024W2/lectures/notes/05_preprocessing-pipelines.html",
+      "imported": true
+    },
+    {
+      "id": "N9",
+      "title": "BYU Stat 121：Multiple Linear Regression - Prediction",
+      "url": "https://stat121.byu.edu/Content_in_Quarto/Unit_7_MLR/3_Prediction/LectureNotes/MLR_Prediction.pdf",
+      "imported": true
+    },
+    {
+      "id": "N10",
+      "title": "University of South Carolina：Multiple Linear Regression",
+      "url": "https://people.stat.sc.edu/sshen/courses/17smstat509/notes/Chapter%209%20Multiple%20Linear%20Regression.pdf",
+      "imported": true
+    }
+  ],
+  "raw_response_file": "output/evidence/notebooklm_revision/final_response.txt",
+  "prompts_file": "output/evidence/notebooklm_revision/research_prompts.json",
+  "evidence_privacy": "The public record excludes Google account identifiers, private notebook URLs and browser screenshots. Original browser evidence remains in the local temporary evidence folder."
+}

@@ -80,7 +80,7 @@ python analyze_dataset.py --input data/50_Startups.csv --target Profit
 
 ## 研究與來源
 
-GPT 協助程式、圖表與文字整理，模型指標由實際程式計算。[NotebookLM 研究筆記](notebooklm_research.md)整理洪水資料的特徵工程、資料洩漏與區間估計；完整摘要與來源可在網站「研究筆記」閱讀。
+GPT 協助程式、圖表與文字整理，模型指標由實際程式計算。[NotebookLM 研究筆記](notebooklm_research.md)使用 Fast Research 搜尋同主題解法，整理十份網路來源。整合分析報告收錄 100 字以上的 NotebookLM 摘要，並在採用段落標示「GPT 輔助內容」及「NotebookLM 摘要」，對應 G1–G6 問答與 N1–N10 來源。
 
 - [scikit-learn：避免資料洩漏](https://scikit-learn.org/stable/common_pitfalls.html)
 - [Conformal prediction 教學](https://arxiv.org/abs/2107.07511)

@@ -1,6 +1,6 @@
 {
   "file": "regression_lab_complete_report.pdf",
-  "pages": 17,
+  "pages": 18,
   "sections": {
     "contents": 2,
     "infographic": 3,
@@ -11,15 +11,16 @@
     "uncertainty": 8,
     "deployment": 9,
     "ai_research": 10,
-    "references": 11,
-    "qa_1": 12,
-    "qa_2": 13,
-    "qa_3": 14,
-    "qa_4": 15,
-    "qa_5": 16,
-    "qa_6": 17
+    "notebooklm_summary": 11,
+    "references": 12,
+    "qa_1": 13,
+    "qa_2": 14,
+    "qa_3": 15,
+    "qa_4": 16,
+    "qa_5": 17,
+    "qa_6": 18
   },
-  "exported_at": "2026-11-03T02:32:04.909995+08:00",
+  "exported_at": "2026-11-03T02:50:00.540393+08:00",
   "chatgpt_web_qa_count": 6,
   "chatgpt_conversation_url": "https://chatgpt.com/c/6ae8d345-a794-83ee-9b4c-07099bdd0c49",
   "screenshot_checks": [
@@ -66,16 +67,22 @@
       "original_jpeg_bytes_preserved": true
     }
   ],
-  "notebooklm_chinese_characters": 276,
+  "notebooklm_chinese_characters": 370,
+  "notebooklm_research_record": "output/evidence/notebooklm_revision/research_result.json",
+  "ai_attribution_markers": {
+    "GPT 輔助內容": 13,
+    "NotebookLM 摘要": 10
+  },
   "numerical_checks": [
     "flood: independently verified RMSE, R2, coverage and disjoint splits",
     "housing: independently verified RMSE, R2, coverage and disjoint splits"
   ],
   "prior_dialogue_appendices_removed": true,
-  "sha256": "da3887a9b34c11f2582e2e6548c5979a9ca7667a220b97ef72a5c2e77aa06b84",
+  "sha256": "df6b468eee5e1ffc737faaaba8780717ea8886679810016dc417e5da1d2686be",
   "visual_review": {
-    "pages_reviewed": 17,
+    "pages_reviewed": 18,
     "render_scale_pixels": 1300,
-    "result": "All rendered pages reviewed. Question screenshots contain titles and images only; requested annotations, link, topic table, and capture timestamps removed. No clipping or overlapping text."
-  }
+    "result": "All pages reviewed. AI attribution labels, GPT map, 370-character NotebookLM summary and source references are legible; no clipping or overlapping text."
+  },
+  "public_privacy_check": "Google account labels, private Notebook URLs and Notebook browser screenshots excluded."
 }
