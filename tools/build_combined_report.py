@@ -1,12 +1,13 @@
-"""Build one current report: analysis, infographic, AI research and visible chat.
+"""Build the analysis report with newly captured ChatGPT web question screenshots.
 
 python tools/build_combined_report.py
-The model outputs are read, not recomputed. Only user-visible chat is exported.
+Model outputs are read, not recomputed. Earlier dialogue appendices are excluded.
 """
 from __future__ import annotations
 from datetime import datetime,timezone
 from zoneinfo import ZoneInfo
 from pathlib import Path
+from io import BytesIO
 from html import escape,unescape
 import hashlib
 import json
@@ -37,7 +38,6 @@ OUT.mkdir(parents=True,exist_ok=True)
 TMP.mkdir(parents=True,exist_ok=True)
 LIVE='https://hitomihuang.github.io/HW2_MULTIPLE_LINEAR_REGRESSION/'
 GITHUB='https://github.com/HitomiHuang/HW2_MULTIPLE_LINEAR_REGRESSION'
-SESSION=Path('C:/Users/black/.codex/sessions/2026/11/02/rollout-2026-11-02T23-34-06-01a19ce5-77aa-7940-bd31-75c52930e315.jsonl')
 TZ=ZoneInfo('Asia/Taipei')
 STAMP=datetime.now(TZ)
 WIDTH=A4[0]-38*mm
@@ -141,68 +141,6 @@ class Infographic(Flowable):
   _,ph=note.wrap(w,50);note.drawOn(c,0,43-ph)
 
 
-def normalized_user(text):
- text=re.sub(r'<in-app-browser-context\b[^>]*>.*?</in-app-browser-context>','',text,flags=re.S).strip()
- text=re.sub(r'^## My request:\s*','',text).strip()
- if text.startswith(('<environment_context>','<external_codex_apps_open_page>')):return ''
- if text.startswith('<send_user_message_question_reply>'):
-  raw=re.sub(r'</?send_user_message_question_reply>','',text).strip()
-  try:
-   replies=json.loads(raw)
-   return '\n\n'.join('提問：'+r.get('question','')+'\n回答：'+r.get('answer','') for r in replies)
-  except Exception:return text
- return text
-
-def collect_chat():
- prior=json.loads((ROOT/'gpt_conversation.json').read_text(encoding='utf-8'))
- groups=[{'title':'附錄 A｜先前保存的 ChatGPT 協作文字','source':'gpt_conversation.json','messages':prior['messages']}]
- current=[];event_types={}
- if SESSION.exists():
-  for line in SESSION.read_text(encoding='utf-8').splitlines():
-   e=json.loads(line);p=e.get('payload',{});role=None;text='';origin='response_item'
-   if e.get('type')=='response_item' and p.get('type')=='message' and p.get('role') in ['user','assistant'] and p.get('channel') in [None,'commentary','final']:
-    role=p['role'];text='\n'.join(b.get('text','') for b in p.get('content',[]) if b.get('type') in ['input_text','output_text','text'])
-   elif e.get('type')=='event_msg' and p.get('type')=='item_completed':
-    item=p.get('item',{})
-    if isinstance(item,dict):
-     kind=item.get('type','');event_types[kind]=event_types.get(kind,0)+1
-     if kind.replace('_','').lower() in ['agentmessage','assistantmessage'] and item.get('phase') in [None,'commentary','final']:
-      role='assistant';value=item.get('content',item.get('text',item.get('message','')))
-      text=value if isinstance(value,str) else '\n'.join(b.get('text','') for b in value if isinstance(b,dict) and b.get('type','').lower() in ['text','output_text']) if isinstance(value,list) else ''
-      origin='event_msg'
-   if not role or not isinstance(text,str):continue
-   if role=='user':text=normalized_user(text)
-   if not text.strip():continue
-   current.append({'role':role,'timestamp':e.get('timestamp',''),'text':text,'origin':origin})
-  # Collapse duplicate emissions from two logging streams, preserving repeated turns.
-  messages=[];seen={}
-  for m in current:
-   key=(m['role'],m['text'].strip());old=seen.get(key)
-   if old and old['origin']!=m['origin']:continue
-   messages.append({k:m[k] for k in ['role','timestamp','text']});seen[key]=m
-  groups.append({'title':'附錄 B｜本次修訂、網站部署與文件整理對話','source':'current chat visible messages','messages':messages})
- else:
-  saved=json.loads((OUT/'conversation_export.json').read_text(encoding='utf-8'))
-  groups=saved['groups']
- record={'exported_at':STAMP.isoformat(),'scope':'既有保存文字與本聊天截至匯出時可取得的使用者、助理與結構化提問；不包含系統指令、內部推理、工具執行紀錄或其他未取得聊天。','groups':groups,'message_count':sum(len(g['messages']) for g in groups)}
- (OUT/'conversation_export.json').write_text(json.dumps(record,ensure_ascii=False,indent=2),encoding='utf-8')
- print('Conversation messages:',record['message_count'],'logging item types:',event_types)
- return record
-
-def chat_paragraphs(text):
- # Reflow the visible text; preserve exact message bodies in conversation_export.json.
- text=unescape(text).replace('\r\n','\n')
- for para in re.split(r'\n\s*\n',text):
-  if not para.strip():continue
-  lines=para.splitlines()
-  joined='\n'.join(lines) if len(lines)<12 else ' '.join(lines)
-  for start in range(0,len(joined),1800):yield P(joined[start:start+1800],'chat')
-
-def timestamp(text):
- try:return datetime.fromisoformat(text.replace('Z','+00:00')).astimezone(TZ).strftime('%Y-%m-%d %H:%M:%S')
- except Exception:return text or '未記錄時間'
-
-
 def plot_diagnostics(results):
  plt.rcParams.update({'font.family':'DejaVu Sans','font.size':9,'axes.spines.top':False,'axes.spines.right':False})
  fig,axes=plt.subplots(2,2,figsize=(9,5.3),layout='constrained')
@@ -221,7 +159,8 @@ def main():
  results={k:json.loads((ROOT/f'web/dist/data/{k}_result.json').read_text(encoding='utf-8')) for k in ['flood','housing']}
  nb=json.loads((ROOT/'notebooklm_result.json').read_text(encoding='utf-8'))
  validation=json.loads((ROOT/'output/web_validation.json').read_text(encoding='utf-8'))
- chat=collect_chat()
+ webqa=json.loads((ROOT/'output/evidence/chatgpt_revision/qa_index.json').read_text(encoding='utf-8'))
+ assert webqa['verified_in_browser'] and len(webqa['questions'])==6
  assert len(re.findall(r'[\u4e00-\u9fff]',nb['summary']))>=100
  checks=[]
  for key,r in results.items():
@@ -244,13 +183,13 @@ def main():
  story.append(table(['分析主題','原始特徵','測試 R²','95% PI 實測覆蓋'],[[label,r['original_features'],f"{r['metrics'][-1]['r2']:.6f}",f"{r['interval']['coverage']*100:.3f}%"] for label,r in [('洪水風險分數',results['flood']),('King County 房價',results['housing'])]],[57*mm,25*mm,38*mm,WIDTH-120*mm]))
  story.append(Spacer(1,6*mm))
  story.append(link('網站：'+LIVE,LIVE));story.append(link('GitHub：'+GITHUB,GITHUB))
- add('文件整理與對話匯出時間：'+STAMP.strftime('%Y-%m-%d %H:%M')+'（Asia/Taipei）','small')
- add('內容包含：資訊圖表、CRISP-DM 分析、模型評估與區間圖、GPT 輔助內容、NotebookLM 摘要、目前可取得的對話文字及原始 ChatGPT 網頁問答截圖。','small')
+ add('文件整理時間：'+STAMP.strftime('%Y-%m-%d %H:%M')+'（Asia/Taipei）','small')
+ add('內容包含：資訊圖表、CRISP-DM 分析、模型評估與區間圖、GPT 輔助內容、NotebookLM 摘要，以及本次實際在 ChatGPT 網頁取得的六組技術問答截圖。','small')
  add('本報告以網站使用的每題 4,000 筆樣本為主要結果。既有 50,000 筆洪水實驗屬不同資料範圍，其指標不與本報告混用。','small')
  section('內容索引','contents')
  toc=TableOfContents();toc.levelStyles=[ParagraphStyle('toc',fontName='CJK',fontSize=10.2,leading=19,textColor=INK,leftIndent=0,rightIndent=15,spaceAfter=5)]
  story.append(toc);story.append(Spacer(1,8*mm))
- add('閱讀方式：先看資訊圖表與兩個題目的評估結果，再查看分析方法與 AI 研究；對話與問答證據集中於附錄。','small')
+ add('閱讀方式：先看資訊圖表與兩個題目的評估結果，再查看分析方法與 AI 研究；本次 ChatGPT 技術問答截圖集中於文末。','small')
  section('資訊圖表｜從資料到預測','infographic');story.append(Infographic(results))
  section('01 / 問題定義與資料理解','understanding')
  add('Business Understanding','h2')
@@ -318,34 +257,42 @@ def main():
  add('本機重現','h2')
  for text in ['python -m pip install -r requirements.txt','python analyze_dataset.py --problem flood','python analyze_dataset.py --problem housing','python analyze_dataset.py --input data/50_Startups.csv --target Profit','python -m unittest discover -s tests -v']:add(text,'small')
  add('主分析引擎：web/dist/analysis.py；網站樣本與示範結果：web/dist/data/；既有數值檢查與部署結果：output/web_validation.json、output/deployment.json。')
- section('對話附錄：收錄範圍與匯出方式','conversation_scope')
- add('依「pdfCrowd 或其他方式」採 ReportLab 將可見對話文字重新排版為 PDF，並附既有 ChatGPT 網頁問答截圖。這次補入後續 README 整理、GitHub Pages 部署、標題調整及文件整合的討論。')
- add('匯出截止：'+STAMP.strftime('%Y-%m-%d %H:%M:%S')+'（Asia/Taipei）。本文件交付後才產生的訊息不在此時間範圍內。')
- story.append(table(['收錄來源','數量'],[[g['title'],str(len(g['messages']))+' 則文字訊息'] for g in chat['groups']]+[['既有 ChatGPT 網頁問答','6 張原始畫面']],[WIDTH-42*mm,42*mm]))
- add('只收錄使用者、GPT 助理與可見的結構化提問；不含系統指令、內部推理及工具執行紀錄。未取得的其他聊天不宣稱完整；本報告確保目前可取得的已保存文字與這個聊天截至匯出時點的訊息均列入。')
- add('附錄保留歷次原始措辭與當時狀態，包含舊網址、檔名及後續已修正的說明；它們是歷史紀錄。專案目前狀態以本報告前文與 GitHub Pages 網址為準。原始文字另保存在 conversation_export.json，方便核對。','small')
- for gi,group in enumerate(chat['groups']):
-  section(group['title'],'chat_'+str(gi))
-  add('以下依保存順序收錄可見訊息。時間統一顯示為 Asia/Taipei；文字換行與 Markdown 以閱讀排版呈現。','small')
-  for i,m in enumerate(group['messages'],1):
-   role={'user':'使用者','assistant':'GPT 助理','assistant_question':'GPT 提問'}.get(m['role'],m['role'])
-   story.append(P(f"{i:02d} / {role} / {timestamp(m.get('timestamp',''))}",'chat_head'))
-   story.extend(chat_paragraphs(m['text']))
- section('附錄 C｜ChatGPT 網頁問答原始截圖','web_chat')
- index=json.loads((ROOT/'output/chatgpt_screenshots.json').read_text(encoding='utf-8'))
- add('以下為先前保存的實際 ChatGPT 網頁技術問答畫面，與文字附錄一併作為 AI 協作證據。','small')
- for i,rel in enumerate(index['screenshots'],1):
-  if i>1:story.append(PageBreak());add('ChatGPT 網頁問答 '+str(i)+' / '+str(len(index['screenshots'])),'h2')
-  story.append(image(ROOT/rel,height=224*mm))
+ section('ChatGPT 技術問答｜實際網頁截圖','chatgpt_web_qa')
+ add('本章收錄本次在 ChatGPT 網頁實際送出問題、取得完整回答後擷取的畫面。問題根據本專案已完成的資料、流程、實測指標與部署方式提出，包含方法確認與適用範圍的追問。')
+ add('提問時提供了本專案的實驗設定與數值，ChatGPT 據此解釋方法及結果；這些回覆不是 ChatGPT 另行執行本機程式或 NotebookLM 的驗證紀錄。','small')
+ story.append(link('實際對話：'+webqa['conversation_url'],webqa['conversation_url']))
+ add('網頁顯示模型：'+webqa['model_label']+'。以下保留原始截圖，不重製或改寫畫面中的回答。','small')
+ story.append(table(['問答','主題'],[[str(i),q['topic']] for i,q in enumerate(webqa['questions'],1)],[20*mm,WIDTH-20*mm]))
+ add('問答 4 的一般獨立性檢查建議，於問答 5 進一步釐清為隨機表格資料、時間及群組切分的適用範圍。閱讀時請一併參照。','small')
+ for i,q in enumerate(webqa['questions'],1):
+  section('問答 '+str(i)+'｜'+q['topic'],'qa_'+str(i))
+  if q.get('editor_note'):add(q['editor_note'],'small')
+  for j,rel in enumerate(q['screenshots']):
+   if j:story.append(PageBreak());add('問答 '+str(i)+'｜續圖','h2')
+   story.append(image(ROOT/rel,height=226*mm))
+   captured=datetime.fromisoformat(q['captured_at'].replace('Z','+00:00')).astimezone(TZ)
+   add('ChatGPT 實際網頁畫面 | 擷取時間：'+captured.strftime('%Y-%m-%d %H:%M:%S')+'（Asia/Taipei）','small')
  destination=OUT/'regression_lab_complete_report.pdf'
  doc=ReportDoc(destination);doc.multiBuild(story,maxPasses=5)
  reader=PdfReader(destination)
  all_text='\n'.join(p.extract_text() or '' for p in reader.pages)
- for term in ['Business Understanding','Data Preparation','Modeling','Evaluation','Deployment','GPT 輔助內容','NotebookLM 摘要','資訊圖表','請幫我組成文件PDF']:
+ for term in ['Business Understanding','Data Preparation','Modeling','Evaluation','Deployment','GPT 輔助內容','NotebookLM 摘要','資訊圖表','ChatGPT 技術問答']:
   assert term in all_text,term
  assert 'https://hitomihuang.github.io/HW2_MULTIPLE_LINEAR_REGRESSION/' in all_text
  assert nb['summary'].split('\n\n')[0][:24] in all_text.replace('\n','')
- manifest={'file':destination.name,'pages':len(reader.pages),'sections':doc.sections,'exported_at':STAMP.isoformat(),'conversation_messages':chat['message_count'],'conversation_groups':{g['title']:len(g['messages']) for g in chat['groups']},'notebooklm_chinese_characters':len(re.findall(r'[\u4e00-\u9fff]',nb['summary'])),'numerical_checks':checks,'sha256':hashlib.sha256(destination.read_bytes()).hexdigest()}
+ for removed in ['先前保存的 ChatGPT 協作文字','本次修訂、網站部署與文件整理對話','ChatGPT 網頁問答原始截圖','請幫我組成文件PDF']:
+  assert removed not in all_text,removed
+ screenshot_checks=[]
+ for i,q in enumerate(webqa['questions'],1):
+  page=reader.pages[doc.sections['qa_'+str(i)]-1]
+  assert len(page.images)==1
+  original=PILImage.open(ROOT/q['screenshots'][0]).convert('RGB')
+  embedded_bytes=page.images[0].indirect_reference.get_object().get_data()
+  assert embedded_bytes==(ROOT/q['screenshots'][0]).read_bytes(),q['topic']
+  embedded=PILImage.open(BytesIO(embedded_bytes)).convert('RGB')
+  assert np.array_equal(np.asarray(original),np.asarray(embedded)),q['topic']
+  screenshot_checks.append({'topic':q['topic'],'path':q['screenshots'][0],'sha256':hashlib.sha256((ROOT/q['screenshots'][0]).read_bytes()).hexdigest(),'original_pixels_preserved':True,'original_jpeg_bytes_preserved':True})
+ manifest={'file':destination.name,'pages':len(reader.pages),'sections':doc.sections,'exported_at':STAMP.isoformat(),'chatgpt_web_qa_count':len(webqa['questions']),'chatgpt_conversation_url':webqa['conversation_url'],'screenshot_checks':screenshot_checks,'notebooklm_chinese_characters':len(re.findall(r'[\u4e00-\u9fff]',nb['summary'])),'numerical_checks':checks,'prior_dialogue_appendices_removed':True,'sha256':hashlib.sha256(destination.read_bytes()).hexdigest()}
  (OUT/'report_manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
  print(json.dumps(manifest,ensure_ascii=False,indent=2))
 

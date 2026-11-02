@@ -1,6 +1,6 @@
 {
   "file": "regression_lab_complete_report.pdf",
-  "pages": 35,
+  "pages": 18,
   "sections": {
     "contents": 2,
     "infographic": 3,
@@ -12,30 +12,71 @@
     "deployment": 9,
     "ai_research": 10,
     "references": 11,
-    "conversation_scope": 12,
-    "chat_0": 13,
-    "chat_1": 22,
-    "web_chat": 30
+    "chatgpt_web_qa": 12,
+    "qa_1": 13,
+    "qa_2": 14,
+    "qa_3": 15,
+    "qa_4": 16,
+    "qa_5": 17,
+    "qa_6": 18
   },
-  "exported_at": "2026-11-03T01:58:48.580246+08:00",
-  "conversation_messages": 73,
-  "conversation_groups": {
-    "附錄 A｜先前保存的 ChatGPT 協作文字": 39,
-    "附錄 B｜本次修訂、網站部署與文件整理對話": 34
-  },
+  "exported_at": "2026-11-03T02:24:01.806439+08:00",
+  "chatgpt_web_qa_count": 6,
+  "chatgpt_conversation_url": "https://chatgpt.com/c/6ae8d345-a794-83ee-9b4c-07099bdd0c49",
+  "screenshot_checks": [
+    {
+      "topic": "CRISP-DM 與資料洩漏",
+      "path": "output/evidence/chatgpt_revision/qa_01.jpg",
+      "sha256": "417bd70cbc36a0354a66c08e86625f12d9ad50ce19792f1aa883d44500dc0ae0",
+      "original_pixels_preserved": true,
+      "original_jpeg_bytes_preserved": true
+    },
+    {
+      "topic": "特徵選擇與交叉驗證",
+      "path": "output/evidence/chatgpt_revision/qa_02.jpg",
+      "sha256": "221c27b823828f721070fcb2755354bdc3ea892a02548ff3009030419b028239",
+      "original_pixels_preserved": true,
+      "original_jpeg_bytes_preserved": true
+    },
+    {
+      "topic": "95% 區間與小樣本校準",
+      "path": "output/evidence/chatgpt_revision/qa_03.jpg",
+      "sha256": "a2f745050495a3c600ece6e9e4d46aacd85ce65d3d6819f8a45d7c66b83de697",
+      "original_pixels_preserved": true,
+      "original_jpeg_bytes_preserved": true
+    },
+    {
+      "topic": "實驗結果與回歸假設",
+      "path": "output/evidence/chatgpt_revision/qa_04.jpg",
+      "sha256": "ba87c7b2f143ff07e22b5f2cbf7fe2ad14c7d8727b773240e08992c8b9132999",
+      "original_pixels_preserved": true,
+      "original_jpeg_bytes_preserved": true
+    },
+    {
+      "topic": "獨立性與群組泛化評估",
+      "path": "output/evidence/chatgpt_revision/qa_05.jpg",
+      "sha256": "2fa9b6584875ca9534d11c19ab868c2bd459d2cdc3a6759b842f692229fe6640",
+      "original_pixels_preserved": true,
+      "original_jpeg_bytes_preserved": true
+    },
+    {
+      "topic": "GitHub Pages 部署與可重現性",
+      "path": "output/evidence/chatgpt_revision/qa_06.jpg",
+      "sha256": "36a27629e423550d6ee7c138dc4a44dfd4d79b1cead697a825a54f37b920cf18",
+      "original_pixels_preserved": true,
+      "original_jpeg_bytes_preserved": true
+    }
+  ],
   "notebooklm_chinese_characters": 276,
   "numerical_checks": [
     "flood: independently verified RMSE, R2, coverage and disjoint splits",
     "housing: independently verified RMSE, R2, coverage and disjoint splits"
   ],
-  "sha256": "e598ff3a7e938f295d8e4232846f5af7b31d482779a9384ffbcfc8a1f5d54470",
+  "prior_dialogue_appendices_removed": true,
+  "sha256": "515921cdecf32466883720aedbc957aed0e2adefc3c3e3612fd8bdfb636e9562",
   "visual_review": {
-    "all_pages_rendered": true,
-    "pages_reviewed": 35,
-    "detailed_pages": [
-      3,
-      10
-    ],
-    "result": "No clipping, overlap or missing chart marks observed."
+    "pages_reviewed": 18,
+    "render_scale_pixels": 1300,
+    "result": "All rendered pages reviewed. New questions and complete replies remain legible; no clipping or overlapping text; original screenshot bytes verified."
   }
 }

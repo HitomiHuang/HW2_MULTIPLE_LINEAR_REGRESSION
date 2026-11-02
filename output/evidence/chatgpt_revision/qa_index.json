@@ -1,0 +1,71 @@
+{
+  "verified_in_browser": true,
+  "method": "Actual questions submitted to ChatGPT web, completed responses reviewed, unaltered browser screenshots captured.",
+  "conversation_url": "https://chatgpt.com/c/6ae8d345-a794-83ee-9b4c-07099bdd0c49",
+  "model_label": "Instant",
+  "captured_at": "2026-11-02T18:21:29.363Z",
+  "context_notice": "Project methods and measured metrics were supplied in the prompts. ChatGPT explained them; it did not independently execute local code or NotebookLM.",
+  "questions": [
+    {
+      "topic": "CRISP-DM 與資料洩漏",
+      "question": "我正在做多元線性回歸網站：洪水合成資料20個特徵、King County房價18個；各4000筆，seed=42，切為訓練2400、校準800、測試800。使用Pipeline補值、標準化與one-hot，SelectKBest＋LinearRegression只在訓練集做5折CV選模。請用繁體中文、250字內、六點說明本專案的CRISP-DM流程，特別指出特徵選擇與避免資料洩漏的做法。請只解釋我提供的方法，不要宣稱你執行過程式。",
+      "conversation_url": "https://chatgpt.com/c/6ae8d345-a794-83ee-9b4c-07099bdd0c49",
+      "screenshots": [
+        "output/evidence/chatgpt_revision/qa_01.jpg"
+      ],
+      "snapshot": "output/evidence/chatgpt_revision/qa_01_dom.txt",
+      "captured_at": "2026-11-02T18:16:46.932Z"
+    },
+    {
+      "topic": "特徵選擇與交叉驗證",
+      "question": "我的SelectKBest比較保留1欄、50%、75%、100%，只用訓練集5折CV，最後兩題都選全部特徵（洪水20欄、房價18欄）。這仍算有做特徵選擇嗎？為何不應為了刪欄而用測試集調整？請以繁體中文、200字內說明，並指出Pipeline應在每個CV訓練折fit、測試集的用途。",
+      "conversation_url": "https://chatgpt.com/c/6ae8d345-a794-83ee-9b4c-07099bdd0c49",
+      "screenshots": [
+        "output/evidence/chatgpt_revision/qa_02.jpg"
+      ],
+      "snapshot": "output/evidence/chatgpt_revision/qa_02_dom.txt",
+      "captured_at": "2026-11-02T18:17:23.821Z"
+    },
+    {
+      "topic": "95% 區間與小樣本校準",
+      "question": "請用繁體中文、250字內、三段純文字比較：OLS平均反應95%信賴區間、單筆95%預測區間、split-conformal區間。我的獨立校準集800筆，取ceil((800+1)×0.95)=761順位為半寬，是否正確？50 Startups切21訓練/19校準/10測試，為何不能僅用10筆校準建立有限的95% conformal區間？請說明必要前提及子群覆蓋限制，不用表格或LaTeX。",
+      "conversation_url": "https://chatgpt.com/c/6ae8d345-a794-83ee-9b4c-07099bdd0c49",
+      "screenshots": [
+        "output/evidence/chatgpt_revision/qa_03.jpg"
+      ],
+      "snapshot": "output/evidence/chatgpt_revision/qa_03_dom.txt",
+      "captured_at": "2026-11-02T18:18:11.425Z"
+    },
+    {
+      "topic": "實驗結果與回歸假設",
+      "question": "我的測試結果：洪水RMSE=0.020139、R²=0.859509、95% PI覆蓋94.625%；房價RMSE=214640.38 USD、R²=0.678480、覆蓋96.375%。房價有sqft_living=sqft_above+sqft_basement的精確共線性，採SVD解。請用繁體中文、250字內解讀結果，並說明線性、等變異、常態、共線性、獨立性該如何檢查。請勿宣稱所有假設通過，也不要把歷史房價或合成分數當成目前估價與真實洪災機率。",
+      "conversation_url": "https://chatgpt.com/c/6ae8d345-a794-83ee-9b4c-07099bdd0c49",
+      "screenshots": [
+        "output/evidence/chatgpt_revision/qa_04.jpg"
+      ],
+      "snapshot": "output/evidence/chatgpt_revision/qa_04_dom.txt",
+      "captured_at": "2026-11-02T18:19:33.449Z",
+      "editor_note": "獨立性診斷的適用條件另於下一組問答補充。"
+    },
+    {
+      "topic": "獨立性與群組泛化評估",
+      "question": "補充：這次是隨機切分的表格資料，列順序不是時間，房價也可能有空間依賴或同一房產重複交易。剛才提到的Durbin–Watson，是否能直接證明這些資料獨立？請以繁體中文、150字內釐清適用條件，並說明應如何使用時間、地區或房產群組切分做泛化評估。",
+      "conversation_url": "https://chatgpt.com/c/6ae8d345-a794-83ee-9b4c-07099bdd0c49",
+      "screenshots": [
+        "output/evidence/chatgpt_revision/qa_05.jpg"
+      ],
+      "snapshot": "output/evidence/chatgpt_revision/qa_05_dom.txt",
+      "captured_at": "2026-11-02T18:20:31.498Z"
+    },
+    {
+      "topic": "GitHub Pages 部署與可重現性",
+      "question": "網站已部署在GitHub Pages，靜態前端透過Pyodide與Web Worker執行scikit-learn分析。可切換洪水與房價、貼CSV網址或上傳檔案、自選Target，下載JSON/逐筆CSV。請用繁體中文、200字內說明報告的Deployment階段應交代哪些可重現性、資料隱私與限制資訊，包含seed、切分、首次載入套件及CSV網址的CORS限制。請勿聲稱你實際開啟網站或執行程式。",
+      "conversation_url": "https://chatgpt.com/c/6ae8d345-a794-83ee-9b4c-07099bdd0c49",
+      "screenshots": [
+        "output/evidence/chatgpt_revision/qa_06.jpg"
+      ],
+      "snapshot": "output/evidence/chatgpt_revision/qa_06_dom.txt",
+      "captured_at": "2026-11-02T18:21:29.361Z"
+    }
+  ]
+}
